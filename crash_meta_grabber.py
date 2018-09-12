@@ -55,10 +55,10 @@ def getCrashMetaData(crash_id_list, out_dir_par):
              
              if key not in forbidden_key_list:
                 print 'CRASH:{},KEY:{},VAL:{}'.format(crash_dump_link, key, val)
-                dump_json_str = dump_json_str + key + ',' + val + '\n'
+                dump_json_str = dump_json_str + key + '=' + val + '\n'
                 print '*'*10
 
-          bytes = dumpContentIntoFile(dump_json_str, out_dir_par + crash_hash + '.csv')
+          bytes = dumpContentIntoFile(dump_json_str, out_dir_par + crash_hash + '.txt')
           print 'Dumped a dump of {} bytes'.format(bytes)
           print '='*50
 
@@ -96,11 +96,11 @@ def getCrashThread(crash_id_list, out_dir_par):
                         src_code_link = 'NO_SOURCE_CODE'
              print crash_dump_link, thread_cnt, sign, src_code_link
              thread_cnt += 1 
-             dump_str = dump_str  + str(thread_cnt) + ',' + sign + ',' + src_code_link + '\n'
+             dump_str = dump_str  + str(thread_cnt) + '=' + sign + '=' + src_code_link + '\n'
              print '='*10
 
 
-          bytes = dumpContentIntoFile(dump_str, out_dir_par + crash_hash + '_crashing_thread' + '.csv')
+          bytes = dumpContentIntoFile(dump_str, out_dir_par + crash_hash + '_crashing_thread' + '.txt')
           print 'Dumped a dump of {} bytes'.format(bytes)
           print '-'*50
 
