@@ -81,17 +81,28 @@ def getCrashThread(crash_id_list, out_dir_par):
              td_list = tr_elem.findAll('td')
              # print td_list
              for inner_td_index in xrange(len(td_list)):
-                 if inner_td_index == 1:
-                    sign = td_list[inner_td_index].split('>')[1].split('<')[0] 
-                 if inner_td_index == 2:                    
-                    temp_src = td_list[inner_td_index]
-                    src_code = temp_src.split('"')[1].split('"')[0]
+                 if inner_td_index == 2:
+                    sign = str(td_list[inner_td_index]).split('>')[1].split('<')[0] 
+                    # sign = td_list[inner_td_index]
+                    # print sign
+                    # print '*'*5
+                 if inner_td_index == 3:                    
+                    temp_src = str(td_list[inner_td_index])
+                    temp_src = temp_src.replace('\n', '')
+                    # print temp_src
+                    # print '-'*10
+                    if 'href' in temp_src:
+                        src_code = temp_src.split('"')[1].split('"')[0]
+                    else:
+                        src_code = 'NO_SOURCE_CODE'
              print thread_cnt, sign, src_code
+             thread_cnt += 1 
+             print '='*50
 
 
           # bytes = dumpContentIntoFile(dump_json_str, out_dir_par + crash_hash + '.json')
           # print 'Dumped a dump of {} bytes'.format(bytes)
-          print '='*50
+          print '-'*50
 
 if __name__=='__main__':
    inp_fil_ = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/2018.crashID.txt'
