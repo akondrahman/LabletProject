@@ -29,10 +29,10 @@ def dumpContentIntoFile(strP, fileP):
 
 def getCrashMetaData(crash_id_list, out_dir_par):
     forbidden_key_list = ['EMCheckCompatibility', 'Processor Notes', 'App Notes', ':Build ID']
+    dump_json_str = ''
     for crashID in crash_id_list:
           crash_dump_link = crashID + "#tab-details"
           crash_hash = crashID.split('/')[-1]
-          print crash_dump_link 
           response_ = urllib2.urlopen(crash_dump_link)
           html_dump = response_.read()
           parsed_html   = BeautifulSoup(html_dump)
@@ -54,11 +54,12 @@ def getCrashMetaData(crash_id_list, out_dir_par):
              val = val.strip()
              
              if key not in forbidden_key_list:
-                print 'KEY:{},VAL:{}'.format(key, val)
-                print '*'*25
+                print 'CRASH:{},KEY:{},VAL:{}'.format(crash_dump_link, key, val)
+                dump_json_str = dump_json_str + key + ',' + val + '\n'
+                print '*'*10
 
-          # bytes = dumpContentIntoFile(dump_json_str, out_dir_par + crash_hash + '.json')
-          # print 'Dumped a dump of {} bytes'.format(bytes)
+          bytes = dumpContentIntoFile(dump_json_str, out_dir_par + crash_hash + '.csv')
+          print 'Dumped a dump of {} bytes'.format(bytes)
           print '='*50
 
 def getCrashThread(crash_id_list, out_dir_par):
@@ -84,26 +85,22 @@ def getCrashThread(crash_id_list, out_dir_par):
                     sign = str(td_list[inner_td_index]).split('>')[1].split('<')[0] 
                     sign = sign.replace('&lt;', '')
                     sign = sign.replace('&gt;', '')
-                    sign = sign.replace('&amp;', '')
-                    # sign = td_list[inner_td_index]
-                    # print sign
-                    # print '*'*5
+
                  if inner_td_index == 3:                    
                     temp_src = str(td_list[inner_td_index])
                     temp_src = temp_src.replace('\n', '')
-                    # print temp_src
-                    # print '-'*10
+
                     if 'href' in temp_src:
-                        src_code = temp_src.split('"')[1].split('"')[0]
+                        src_code_link = temp_src.split('"')[1].split('"')[0]
                     else:
-                        src_code = 'NO_SOURCE_CODE'
-             print crash_dump_link, thread_cnt, sign, src_code
+                        src_code_link = 'NO_SOURCE_CODE'
+             print crash_dump_link, thread_cnt, sign, src_code_link
              thread_cnt += 1 
-             dump_str = dump_str  + str(thread_cnt) + ',' + sign + ',' + src_code + '\n'
-             print '='*25
+             dump_str = dump_str  + str(thread_cnt) + ',' + sign + ',' + src_code_link + '\n'
+             print '='*10
 
 
-          bytes = dumpContentIntoFile(dump_str, out_dir_par + crash_hash + '_crashing_thread' + '.json')
+          bytes = dumpContentIntoFile(dump_str, out_dir_par + crash_hash + '_crashing_thread' + '.csv')
           print 'Dumped a dump of {} bytes'.format(bytes)
           print '-'*50
 
@@ -115,5 +112,5 @@ if __name__=='__main__':
    crashIDs = getOutputLines(inp_fil_)	
    # print crashIDs
 
-   # getCrashMetaData(crashIDs, meta_out_dir)
-   getCrashThread(crashIDs, thread_out_dir)
+   getCrashMetaData(crashIDs, meta_out_dir)
+   # getCrashThread(crashIDs, thread_out_dir)
