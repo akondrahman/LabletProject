@@ -29,8 +29,8 @@ def dumpContentIntoFile(strP, fileP):
 
 def getCrashMetaData(crash_id_list, out_dir_par):
     forbidden_key_list = ['EMCheckCompatibility', 'Processor Notes', 'App Notes', ':Build ID']
-    dump_json_str = ''
     for crashID in crash_id_list:
+          dump_json_str = ''      
           crash_dump_link = crashID + "#tab-details"
           crash_hash = crashID.split('/')[-1]
           response_ = urllib2.urlopen(crash_dump_link)
@@ -63,8 +63,8 @@ def getCrashMetaData(crash_id_list, out_dir_par):
           print '='*50
 
 def getCrashThread(crash_id_list, out_dir_par):
-    dump_str = ''
     for crashID in crash_id_list:
+          dump_str = ''
           crash_dump_link = crashID + "#tab-details"
           crash_hash = crashID.split('/')[-1] 
           response_ = urllib2.urlopen(crash_dump_link)
