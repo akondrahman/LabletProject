@@ -85,6 +85,7 @@ def getCrashThread(crash_id_list, out_dir_par):
                     sign = str(td_list[inner_td_index]).split('>')[1].split('<')[0] 
                     sign = sign.replace('&lt;', '')
                     sign = sign.replace('&gt;', '')
+                    sign = sign.replace('&amp;', '')
 
                  if inner_td_index == 3:                    
                     temp_src = str(td_list[inner_td_index])
