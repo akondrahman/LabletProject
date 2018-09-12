@@ -3,12 +3,14 @@ Akond Rahman
 Sep 12 2018 
 Crash metadata grabber 
 '''
+
 from BeautifulSoup import BeautifulSoup
 import urllib2
 import json 
 import ast 
 import os 
 import numpy as np 
+import cPickle as pickle
 
 def getOutputLines(inp_fil_):
     file_lines = []
@@ -28,8 +30,10 @@ def dumpContentIntoFile(strP, fileP):
 
 
 def getCrashMetaData(crash_id_list, out_dir_par):
+    full_dict = {}
     forbidden_key_list = ['EMCheckCompatibility', 'Processor Notes', 'App Notes', ':Build ID']
     for crashID in crash_id_list:
+          per_crash_data = []
           dump_json_str = ''      
           crash_dump_link = crashID + "#tab-details"
           crash_hash = crashID.split('/')[-1]
@@ -42,7 +46,7 @@ def getCrashMetaData(crash_id_list, out_dir_par):
           # print tr_list
           for tr_elem in tr_list:
              key = str(tr_elem.find('th', attrs={'scope':'row'}))
-             kwy = key.strip()
+             key = key.strip()
              # print key 
              if (('<' in key) and ('>' in key)):
                 key = key.split('>')[1].split('<')[0]
@@ -56,14 +60,20 @@ def getCrashMetaData(crash_id_list, out_dir_par):
              if key not in forbidden_key_list:
                 print 'CRASH:{},KEY:{},VAL:{}'.format(crash_dump_link, key, val)
                 dump_json_str = dump_json_str + key + '=' + val + '\n'
+                tmp_tup = (key, val)
+                per_crash_data.append(tmp_tup)
                 print '*'*10
 
+          full_dict[crashID] = per_crash_data
           bytes = dumpContentIntoFile(dump_json_str, out_dir_par + crash_hash + '.txt')
           print 'Dumped a dump of {} bytes'.format(bytes)
           print '='*50
+    pickle.dump( full_dict, open( out_dir_par + 'ALL_CRASH_METADATA.PKL', 'wb' ) )
 
 def getCrashThread(crash_id_list, out_dir_par):
+    full_dict = {}
     for crashID in crash_id_list:
+          per_crash_data = []
           dump_str = ''
           crash_dump_link = crashID + "#tab-details"
           crash_hash = crashID.split('/')[-1] 
@@ -98,12 +108,15 @@ def getCrashThread(crash_id_list, out_dir_par):
              print crash_dump_link, thread_cnt, sign, src_code_link
              thread_cnt += 1 
              dump_str = dump_str  + str(thread_cnt) + '=' + sign + '=' + src_code_link + '\n'
+             tmp_tup = (thread_cnt, sign, src_code_link)
+             per_crash_data.append(tmp_tup)
              print '='*10
 
-
+          full_dict[crashID] = per_crash_data
           bytes = dumpContentIntoFile(dump_str, out_dir_par + crash_hash + '_crashing_thread' + '.txt')
           print 'Dumped a dump of {} bytes'.format(bytes)
           print '-'*50
+    pickle.dump( full_dict, open( out_dir_par + 'ALL_CRASH_THREAD.PKL', 'wb' ) )          
 
 if __name__=='__main__':
    inp_fil_ = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/2018.crashID.txt'
@@ -113,5 +126,5 @@ if __name__=='__main__':
    crashIDs = getOutputLines(inp_fil_)	
    # print crashIDs
 
-   getCrashMetaData(crashIDs, meta_out_dir)
-   # getCrashThread(crashIDs, thread_out_dir)
+#    getCrashMetaData(crashIDs, meta_out_dir)
+   getCrashThread(crashIDs, thread_out_dir)
