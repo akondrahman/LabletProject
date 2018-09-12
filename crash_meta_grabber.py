@@ -39,10 +39,13 @@ def getCrashMetaData(crash_id_list, out_dir_par):
           tr_list = unparsed_dump.findAll('tr')
           # print tr_list
           for tr_elem in tr_list:
-             key = tr_elem.find('th', attrs={'scope':'row'}).text
-             key = key.split('>')[1].split('<')[0]
+             key = tr_elem.find('th', attrs={'scope':'row'}).getString()
+             # print key 
+             if (('<' in key) and ('>' in key)):
+                key = key.split('>')[1].split('<')[0]
 
-             val = tr_elem.find('td').text
+             val = tr_elem.find('td').getString()
+             # print val 
              val = val.split('>')[1].split('<')[0]
              val = val.replace('\n', '')
 
