@@ -62,11 +62,10 @@ def getCrashMetaData(crash_id_list, out_dir_par):
           print '='*50
 
 def getCrashThread(crash_id_list, out_dir_par):
-    forbidden_key_list = ['']
+    dump_str = ''
     for crashID in crash_id_list:
           crash_dump_link = crashID + "#tab-details"
-          crash_hash = crashID.split('/')[-1]
-          print crash_dump_link 
+          crash_hash = crashID.split('/')[-1] 
           response_ = urllib2.urlopen(crash_dump_link)
           html_dump = response_.read()
           parsed_html   = BeautifulSoup(html_dump)
@@ -83,6 +82,9 @@ def getCrashThread(crash_id_list, out_dir_par):
              for inner_td_index in xrange(len(td_list)):
                  if inner_td_index == 2:
                     sign = str(td_list[inner_td_index]).split('>')[1].split('<')[0] 
+                    sign = sign.replace('&lt;', '')
+                    sign = sign.replace('&gt;', '')
+                    sign = sign.replace('&amp;', '')
                     # sign = td_list[inner_td_index]
                     # print sign
                     # print '*'*5
@@ -95,13 +97,14 @@ def getCrashThread(crash_id_list, out_dir_par):
                         src_code = temp_src.split('"')[1].split('"')[0]
                     else:
                         src_code = 'NO_SOURCE_CODE'
-             print thread_cnt, sign, src_code
+             print crash_dump_link, thread_cnt, sign, src_code
              thread_cnt += 1 
-             print '='*50
+             dump_str = dump_str  + str(thread_cnt) + ',' + sign + ',' + src_code + '\n'
+             print '='*25
 
 
-          # bytes = dumpContentIntoFile(dump_json_str, out_dir_par + crash_hash + '.json')
-          # print 'Dumped a dump of {} bytes'.format(bytes)
+          bytes = dumpContentIntoFile(dump_str, out_dir_par + crash_hash + '_crashing_thread' + '.json')
+          print 'Dumped a dump of {} bytes'.format(bytes)
           print '-'*50
 
 if __name__=='__main__':
