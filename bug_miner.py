@@ -6,7 +6,10 @@ Sep 14, 2018
 import pandas as pd 
 import numpy as np
 import json 
-import requests 
+import requests
+import cPickle as pickle 
+
+
 def processDict(dict_p):
     data_list = []
     if 'bugs' in dict_p:
@@ -24,15 +27,17 @@ def processDict(dict_p):
            resolution     = bug_['resolution']           
 
            severity       = bug_['severity']           
-           status         = bug_['status']           
+           status         = bug_['status'] 
+           summary        = bug_['summary']                      
 
-           data_list = [alias, involved_count, comment_count, component, create_ts, priority, product, resolution, severity, status]
+           data_list = [alias, involved_count, comment_count, component, create_ts, priority, product, resolution, severity, status, summary]
     
     return data_list
 
 
 
 def getBugData(df_param):
+    all_bug_data = {}
     bugIDs = np.unique( df_param['BUG_ID'].tolist() )
     for bugID  in bugIDs:
         req_url  = 'https://bugzilla.mozilla.org/rest/bug/' + str(bugID).strip()    
@@ -40,11 +45,16 @@ def getBugData(df_param):
         bug_dict = bug_data.json()
         # print bug_dict 
         data_for_bug = processDict(bug_dict)
-        print bugID, data_for_bug
-        print '*'*50
+        # print bugID, data_for_bug
+        if bugID not in all_bug_data:
+           all_bug_data[bugID] = data_for_bug
+        # print '*'*50
+    return all_bug_data
 
 
 if __name__=='__main__':
-   bug_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/2018.bug.crash.mapping.csv'
+   bug_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/2016.bug.crash.mapping.csv'
    bug_df = pd.read_csv(bug_file)
-   getBugData(bug_df)
+   all_bug_dict = getBugData(bug_df)
+   pickle.dump( all_bug_dict, open('/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/2016.ALL.BUG.DATA.PKL', 'wb')) 
+   print all_bug_dict   

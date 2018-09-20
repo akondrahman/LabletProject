@@ -105,12 +105,11 @@ def getCrashThread(crash_id_list, out_dir_par):
                         src_code_link = temp_src.split('"')[1].split('"')[0]
                     else:
                         src_code_link = 'NO_SOURCE_CODE'
-             print crash_dump_link, thread_cnt, sign, src_code_link
+
              thread_cnt += 1 
              dump_str = dump_str  + str(thread_cnt) + '=' + sign + '=' + src_code_link + '\n'
              tmp_tup = (thread_cnt, sign, src_code_link)
              per_crash_data.append(tmp_tup)
-             print '='*10
 
           full_dict[crashID] = per_crash_data
           bytes = dumpContentIntoFile(dump_str, out_dir_par + crash_hash + '_crashing_thread' + '.txt')
@@ -119,12 +118,15 @@ def getCrashThread(crash_id_list, out_dir_par):
     pickle.dump( full_dict, open( out_dir_par + 'ALL_CRASH_THREAD.PKL', 'wb' ) )          
 
 if __name__=='__main__':
-   inp_fil_ = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/2018.crashID.txt'
+#    inp_fil_ = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/2018.crashID.txt'
+#    meta_out_dir  = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/meta_crash_dump_out/'
+#    thread_out_dir  = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/thread_crash_dump_out/'
+
+   inp_fil_ = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/2017.crashID.txt'
    meta_out_dir  = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/meta_crash_dump_out/'
    thread_out_dir  = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/thread_crash_dump_out/'
 
    crashIDs = getOutputLines(inp_fil_)	
-   # print crashIDs
 
-#    getCrashMetaData(crashIDs, meta_out_dir)
+   getCrashMetaData(crashIDs, meta_out_dir)
    getCrashThread(crashIDs, thread_out_dir)
