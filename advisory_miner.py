@@ -13,6 +13,7 @@ import cPickle as pickle
 
 
 def getVulnName(parsed_html):
+    vuln_names = []
     unparsed_dumps = parsed_html.body.findAll('h4')
     #print advi_link, unparsed_dump         
     for h4_content in unparsed_dumps:
@@ -22,26 +23,30 @@ def getVulnName(parsed_html):
             vuln_data = span_data.split('>')[1].split('<')[0]
         else:
             vuln_data = 'Unnamed vulnerability'    
-    return vuln_data
+        vuln_names.append(vuln_data)
+    return vuln_names
 
 def getVulnImpact(parsed_html):
+    vulns = []
     vuln_impact = 'NOT_REPORTED'
     unparsed_dumps = parsed_html.body.findAll('dd')
     for dd_content in unparsed_dumps:
        dd_content = str(dd_content)
        if ('class="level' in dd_content):      
-         if('"' in dd_content):  
             vuln_impact = dd_content.split('"')[1].split('"')[0] 
-    return vuln_impact 
+            vulns.append(vuln_impact)
+    return vulns
 
 def processAdvisory(link_ls):
     for advi_link in link_ls:
           response_ = urllib2.urlopen(advi_link)
           html_dump = response_.read()
           parsed_html    = BeautifulSoup(html_dump)
-          vuln_data = getVulnName(parsed_html)
-          vuln_impact = getVulnImpact(parsed_html)
-          print  advi_link, vuln_data, vuln_impact    
+          vuln_data_ls = getVulnName(parsed_html)
+          vuln_impact_ls = getVulnImpact(parsed_html)
+          name_and_impact = zip(vuln_data_ls, vuln_impact_ls)
+          print name_and_impact
+          #print  advi_link, vuln_data, vuln_impact    
 
 if __name__=='__main__':
   secu_advi_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/2018.Advisory.Bug.Mapping.csv'
