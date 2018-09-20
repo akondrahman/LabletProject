@@ -41,6 +41,7 @@ def getVulnImpact(parsed_html):
 def processAdvisory(link_ls, pkl_output):
     adv_dict = {} 
     for advi_link in link_ls:
+      try:
           response_ = urllib2.urlopen(advi_link)
           html_dump = response_.read()
           parsed_html    = BeautifulSoup(html_dump)
@@ -51,12 +52,14 @@ def processAdvisory(link_ls, pkl_output):
           #print  advi_link, vuln_data, vuln_impact    
           if advi_link not in adv_dict:
              adv_dict[advi_link] = name_and_impact
-    print adv_dict
+      except urllib2.HTTPError as exc:
+          print exc.msg + ' for ' + advi_link    
+    print len(adv_dict)
     pickle.dump( adv_dict, open(pkl_output, 'wb'))          
     
 if __name__=='__main__':
-  secu_advi_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/2018.Advisory.Bug.Mapping.csv'
+  secu_advi_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2016/2016.Advisory.Bug.Mapping.csv'
   advi_df = pd.read_csv(secu_advi_file)
   advi_ls = np.unique( advi_df['Advisory'].tolist() )
-  output_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/2018.Advisory.Severity.PKL'
+  output_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2016/2016.Advisory.Severity.PKL'
   processAdvisory(advi_ls, output_file)
