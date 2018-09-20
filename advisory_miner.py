@@ -25,10 +25,13 @@ def getVulnName(parsed_html):
     return vuln_data
 
 def getVulnImpact(parsed_html):
-    vuln_impact = ''
-    unparsed_dumps = parsed_html.body.findAll('dl', attrs={'class':'summary'})
-    for dl_content in unparsed_dumps:
-       print dl_content            
+    vuln_impact = 'NOT_REPORTED'
+    unparsed_dumps = parsed_html.body.findAll('dd')
+    for dd_content in unparsed_dumps:
+       dd_content = str(dd_content)
+       if ('class="level' in dd_content):      
+         if('"' in dd_content):  
+            vuln_impact = dd_content.split('"')[1].split('"')[0] 
     return vuln_impact 
 
 def processAdvisory(link_ls):
@@ -38,7 +41,7 @@ def processAdvisory(link_ls):
           parsed_html    = BeautifulSoup(html_dump)
           vuln_data = getVulnName(parsed_html)
           vuln_impact = getVulnImpact(parsed_html)
-          print  advi_link, vuln_data    
+          print  advi_link, vuln_data, vuln_impact    
 
 if __name__=='__main__':
   secu_advi_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/2018.Advisory.Bug.Mapping.csv'
