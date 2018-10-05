@@ -80,8 +80,14 @@ def getCrashDetails(fil_, cra_lis):
                     install_age = val_                    
                 elif (key_=='Total Virtual Memory'):
                     tot_vm = val_
+                    tot_vm = tot_vm.replace(',', '')
+                    tot_vm = tot_vm.replace(' ', '')
+                    tot_vm = tot_vm.split('b')[0]
                 elif(key_=='Available Virtual Memory'):
                     ava_vm = val_                         
+                    ava_vm = ava_vm.replace(',', '')
+                    ava_vm = ava_vm.replace(' ', '')
+                    ava_vm = ava_vm.split('b')[0]
                 elif(key_=='System Memory Use Percentage'):
                     sys_mem_usg = val_     
         tup_track = (crashLink, advisoryID, bugID, sign, prod, reason, os, install_age, tot_vm, ava_vm, sys_mem_usg)  
@@ -104,7 +110,7 @@ if __name__=='__main__':
    crash_dat   = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017_CRASH_METADATA.PKL'
    crash_lis   = getCrashDetails(crash_dat, adv_bug_cra)
    #print crash_lis
-   df_cols = ['CRASH', 'ADVISORY', 'BUGID', 'CRASH_SIGN', 'PRODUCT', 'CRASH_REASON', 'OS', 'INSTALL_AGE', 'TOTAL_VM', 'AVAILABLE_VM', 'SYS_MEM_USG_PER']
+   df_cols = ['CRASH', 'ADVISORY', 'BUGID', 'CRASH_SIGN', 'PRODUCT', 'CRASH_REASON', 'OS', 'INSTALL_AGE', 'TOTAL_VM_BYTES', 'AVAILABLE_VM_BYTES', 'SYS_MEM_USG_PER']
    detailed_crash_df = pd.DataFrame(crash_lis, columns=df_cols)
    print detailed_crash_df.shape
    print detailed_crash_df.head()
