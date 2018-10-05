@@ -7,6 +7,8 @@ import cPickle as pickle
 import pandas as pd  
 import numpy as np 
 import csv 
+from collections import Counter 
+
 def getAdvData(file_):
     adv_dic = pickle.load(open(file_, 'rb'))
     return adv_dic 
@@ -94,10 +96,25 @@ def getCrashDetails(fil_, cra_lis):
         final_ls.append(tup_track)
     return final_ls                
            
-         
+def doReasonAnalysis(df_p):
+    prod_list = np.unique( df_p['PRODUCT'].tolist() )         
+    for prod in prod_list: 
+        prod_full_df = df_p[df_p['PRODUCT']==prod]
+        prod_full_df_len, prod_full_df_cols = prod_full_df.shape 
+        reason_list = prod_full_df['CRASH_REASON'].tolist()
+        reason_freq = dict(Counter(reason_list))
+        print '-'*50
+        print prod 
+        print 'Crash count:', prod_full_df_len 
+        print reason_freq
+        print '-'*50
+
 
 
 if __name__=='__main__':
+   '''
+   Dataframe construction 
+   '''
    adv_vul_dat = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017.Advisory.Severity.PKL'
    adv_cve_dic = getAdvData(adv_vul_dat)
    #print adv_cve_dic
@@ -112,6 +129,10 @@ if __name__=='__main__':
    #print crash_lis
    df_cols = ['CRASH', 'ADVISORY', 'BUGID', 'CRASH_SIGN', 'PRODUCT', 'CRASH_REASON', 'OS', 'INSTALL_AGE', 'TOTAL_VM_BYTES', 'AVAILABLE_VM_BYTES', 'SYS_MEM_USG_PER']
    detailed_crash_df = pd.DataFrame(crash_lis, columns=df_cols)
-   print detailed_crash_df.shape
-   print detailed_crash_df.head()
+   #print detailed_crash_df.shape
+   #print detailed_crash_df.head()
+   '''
+   Dataframe analysis
+   '''
+   doReasonAnalysis(detailed_crash_df)
    
