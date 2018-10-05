@@ -55,7 +55,41 @@ def getAdvBugCrashData(dic_, fil_):
                    final_list.append(tuple_add)
     return final_list
     
-    
+def getCrashDetails(fil_, cra_lis):
+    final_ls = []
+    crash_meta_data = pickle.load(open(fil_, 'rb'))   
+    for tup_ite in cra_lis:
+        advisoryID = tup_ite[0]
+        bugID      = tup_ite[1]        
+        crashLink  = tup_ite[2]
+        if crashLink in crash_meta_data:
+            sign, prod, reason, os, install_age, tot_vm, ava_vm, sys_mem_usg = '', '', '', '', '', '', '', ''
+            list_of_tuples = crash_meta_data[crashLink]
+            for tup_ in list_of_tuples:
+                key_ = tup_[0]
+                val_ = tup_[1]
+                if (key_=='Signature'):
+                   sign =  val_
+                elif (key_=='Product'):
+                    prod = val_
+                elif(key_=='Crash Reason'):
+                    reason = val_
+                elif (key_=='OS'):
+                    os = val_
+                elif(key_=='Install Age'):
+                    install_age = val_                    
+                elif (key_=='Total Virtual Memory'):
+                    tot_vm = val_
+                elif(key_=='Available Virtual Memory'):
+                    ava_vm = val_                         
+                elif(key_=='System Memory Use Percentage'):
+                    sys_mem_usg = val_     
+        tup_track = (crashLink, advisoryID, bugID, sign, prod, reason, os, install_age, tot_vm, ava_vm, sys_mem_usg)  
+        final_ls.append(tup_track)
+    return final_ls                
+           
+         
+
 
 if __name__=='__main__':
    adv_vul_dat = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017.Advisory.Severity.PKL'
@@ -66,4 +100,7 @@ if __name__=='__main__':
    #print adv_bug_dic
    bug_cra_dat = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017.bug.crash.mapping.csv'
    adv_bug_cra = getAdvBugCrashData(adv_bug_dic, bug_cra_dat)
-   print adv_bug_cra
+   print 'Number of crashes with vulnerabilities:', len(adv_bug_cra)
+   crash_dat   = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017_CRASH_METADATA.PKL'
+   crash_lis   = getCrashDetails(crash_dat, adv_bug_cra)
+   print crash_lis
