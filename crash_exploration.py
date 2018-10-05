@@ -103,4 +103,9 @@ if __name__=='__main__':
    print 'Number of crashes with vulnerabilities:', len(adv_bug_cra)
    crash_dat   = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017_CRASH_METADATA.PKL'
    crash_lis   = getCrashDetails(crash_dat, adv_bug_cra)
-   print crash_lis
+   #print crash_lis
+   df_cols = ['CRASH', 'ADVISORY', 'BUGID', 'CRASH_SIGN', 'PRODUCT', 'CRASH_REASON', 'OS', 'INSTALL_AGE', 'TOTAL_VM', 'AVAILABLE_VM', 'SYS_MEM_USG_PER']
+   detailed_crash_df = pd.DataFrame(crash_lis, columns=df_cols)
+   print detailed_crash_df.shape
+   print detailed_crash_df.head()
+   
