@@ -39,17 +39,14 @@ def getVulnImpact(parsed_html):
     return vulns
 
 def getVulnBugzillaURL(parsed_html, advi_link):
-    dict_ = {}
-    # unparsed_dumps = parsed_html.body.findAll('section', attrs={'class':'cve'})
+    bug_lists = []
     unparsed_dumps = parsed_html.body.findAll('li')
     for bug_url_content in unparsed_dumps:
        bug_url_content = str(bug_url_content)
        if 'a href="https://bugzilla.mozilla.org/' in bug_url_content:
-           print advi_link 
            bug_url = bug_url_content.split('"')[1].split('"')[0]
-           print bug_url
-           print '='*50  
-    return dict_
+           bug_lists.append(bug_url)
+    return bug_lists
 
 def processAdvisory(link_ls, pkl_output):
     adv_dict = {} 
@@ -63,11 +60,11 @@ def processAdvisory(link_ls, pkl_output):
           vuln_impact_ls = getVulnImpact(parsed_html)
           vuln_bug_list  = getVulnBugzillaURL(parsed_html, advi_link)
 
-          name_and_impact = zip(vuln_data_ls, vuln_impact_ls) # list of tuples (description, severity)
-          #print name_and_impact
+          name_impact_bugs = zip(vuln_data_ls, vuln_impact_ls, vuln_bug_list) # list of tuples (description, severity, bugURL)
+          print name_impact_bugs
           #print  advi_link, vuln_data, vuln_impact    
           if advi_link not in adv_dict:
-             adv_dict[advi_link] = name_and_impact
+             adv_dict[advi_link] = name_impact_bugs
       except urllib2.HTTPError as exc:
           print exc.msg + ' for ' + advi_link    
     print len(adv_dict)
