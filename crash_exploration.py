@@ -13,23 +13,24 @@ def getAdvData(file_):
     dict_ret={}
     adv_dic = pickle.load(open(file_, 'rb'))
     for adv_, cve_details in adv_dic.iteritems():
-        cve_name   = cve_details[0]
-        cve_impact = cve_details[1]
-        bug_ids    = cve_details[2]
-        if 'buglist.cgi' in bug_ids:
-           bugs = bug_ids.split('=')[1]
-           bug_lis = bugs.split('%')
-           bug_lis = [x_.replace('2C', '') for x_ in bug_lis]
-           bug_lis = [int(x_) for x_ in bug_lis if len(x_) > 0]
-           for bug_ in bug_lis:
-               if bug_ not in dict_ret:
-                  dict_ret[bug_] = (adv_, cve_name, cve_impact)
-        else: 
-           bug = bug_ids.split('=')[1]
-           bug = bug.replace(' ', '')
-           bug = int(bug)
-           if bug not in dict_ret:
-              dict_ret[bug] = (adv_, cve_name, cve_impact)
+        for cve_detail in cve_details:
+            cve_name   = cve_detail[0]
+            cve_impact = cve_detail[1]
+            bug_ids    = cve_detail[2]
+            if 'buglist.cgi' in bug_ids:
+                bugs = bug_ids.split('=')[1]
+                bug_lis = bugs.split('%')
+                bug_lis = [x_.replace('2C', '') for x_ in bug_lis]
+                bug_lis = [int(x_) for x_ in bug_lis if len(x_) > 0]
+                for bug_ in bug_lis:
+                    if bug_ not in dict_ret:
+                        dict_ret[bug_] = (adv_, cve_name, cve_impact)
+            else: 
+                bug = bug_ids.split('=')[1]
+                bug = bug.replace(' ', '')
+                bug = int(bug)
+                if bug not in dict_ret:
+                    dict_ret[bug] = (adv_, cve_name, cve_impact)
 
     return dict_ret 
 
