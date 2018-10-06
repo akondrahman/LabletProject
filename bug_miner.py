@@ -53,8 +53,8 @@ def getBugData(df_param):
 
 
 if __name__=='__main__':
-   bug_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/2016.bug.crash.mapping.csv'
+   bug_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017.DETAILED.CRASH.DF.csv'
    bug_df = pd.read_csv(bug_file)
    all_bug_dict = getBugData(bug_df)
-   pickle.dump( all_bug_dict, open('/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/2016.ALL.BUG.DATA.PKL', 'wb')) 
+   pickle.dump( all_bug_dict, open('/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017.NEEDED.BUG.DETAILS.PKL', 'wb')) 
    print all_bug_dict   

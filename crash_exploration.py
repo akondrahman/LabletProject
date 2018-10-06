@@ -83,13 +83,20 @@ def getAdvBugCrashData(dic_, fil_):
                    final_list.append(tuple_add)
     return final_list
     
-def getCrashDetails(fil_, cra_lis, cve_dic):
+def getCrashDetails(fil_, cra_lis, bug_det_dic):
     final_ls = []
     crash_meta_data = pickle.load(open(fil_, 'rb'))   
     for tup_ite in cra_lis:
         advisoryID = tup_ite[0]
         bugID      = tup_ite[1]        
         crashLink  = tup_ite[2]
+
+        bugID      = int(bugID)
+        severity   = 'NOT_FOUND'
+        if bugID in bug_det_dic:
+           bug_det  = bug_det_dic[bugID]
+           severity = bug_det[8]
+        
         if crashLink in crash_meta_data:
             sign, prod, reason, os, install_age, tot_vm, ava_vm, sys_mem_usg = '', '', '', '', '', '', '', ''
             list_of_tuples = crash_meta_data[crashLink]
@@ -122,7 +129,7 @@ def getCrashDetails(fil_, cra_lis, cve_dic):
                 elif(key_=='System Memory Use Percentage'):
                     sys_mem_usg = val_     
 
-        tup_track = (crashLink, advisoryID, bugID, sign, prod, reason, os, install_age, tot_vm, ava_vm, sys_mem_usg)  
+        tup_track = (crashLink, advisoryID, bugID, sign, prod, reason, os, install_age, tot_vm, ava_vm, sys_mem_usg, priority)  
         final_ls.append(tup_track)
     return final_ls                
 
@@ -158,29 +165,34 @@ def doReasonAnalysis(df_p):
         print '-'*50
 
 
-
 if __name__=='__main__':
    '''
    Dataframe construction 
    '''
    adv_vul_dat = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017.Advisory.Severity.PKL'
    adv_cve_dic = getAdvData(adv_vul_dat)
-   #print adv_cve_dic  ## this is a dict where the key is bugzilla IDs, and the values are (cve details, impact, and advisory name)
-   print 'Number of bugzilla IDs that map to CVEs:', len(adv_cve_dic)
+   #print adv_cve_dic  ## this is a dict where the key is advisory name 
+   print 'Number of advisories that map to CVEs:', len(adv_cve_dic)
    adv_bug_dat = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017.Advisory.Bug.Mapping.csv'
    adv_bug_dic = getAdvBugData(adv_bug_dat)
    #print adv_bug_dic
    bug_cra_dat = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017.bug.crash.mapping.csv'
    adv_bug_cra = getAdvBugCrashData(adv_bug_dic, bug_cra_dat)
    print 'Number of crashes with vulnerabilities:', len(adv_bug_cra)
+
+   bug_det_dat = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017.NEEDED.BUG.DETAILS.PKL'
+   bug_det_dic = pickle.load(open(bug_det_dat, 'rb'))
+   print 'Number of bugs with details:', len(bug_det_dic)   
+
    crash_dat   = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017_CRASH_METADATA.PKL'
-   crash_lis   = getCrashDetails(crash_dat, adv_bug_cra, adv_cve_dic)
+   crash_lis   = getCrashDetails(crash_dat, adv_bug_cra, bug_det_dic)
    #print crash_lis
-   df_cols = ['CRASH', 'ADVISORY', 'BUGID', 'CRASH_SIGN', 'PRODUCT', 'CRASH_REASON', 'OS', 'INSTALL_AGE', 'TOTAL_VM_BYTES', 'AVAILABLE_VM_BYTES', 'SYS_MEM_USG_PER', 'CVE_NAME', 'CVE_IMPACT']
+
+   df_cols = ['CRASH', 'ADVISORY', 'BUGID', 'CRASH_SIGN', 'PRODUCT', 'CRASH_REASON', 'OS', 'INSTALL_AGE', 'TOTAL_VM_BYTES', 'AVAILABLE_VM_BYTES', 'SYS_MEM_USG_PER', 'SEVERITY']
    detailed_crash_df = pd.DataFrame(crash_lis, columns=df_cols)
    #print detailed_crash_df.shape
    print detailed_crash_df.head()
-   print np.unique(detailed_crash_df['CVE_NAME'].tolist())
+   detailed_crash_df.to_csv('/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017.DETAILED.CRASH.DF.csv')
    '''
    Dataframe analysis
    '''
