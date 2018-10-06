@@ -129,7 +129,7 @@ def getCrashDetails(fil_, cra_lis, bug_det_dic):
                 elif(key_=='System Memory Use Percentage'):
                     sys_mem_usg = val_     
 
-        tup_track = (crashLink, advisoryID, bugID, sign, prod, reason, os, install_age, tot_vm, ava_vm, sys_mem_usg, priority)  
+        tup_track = (crashLink, advisoryID, bugID, sign, prod, reason, os, install_age, tot_vm, ava_vm, sys_mem_usg, severity)  
         final_ls.append(tup_track)
     return final_ls                
 
@@ -191,10 +191,10 @@ if __name__=='__main__':
    df_cols = ['CRASH', 'ADVISORY', 'BUGID', 'CRASH_SIGN', 'PRODUCT', 'CRASH_REASON', 'OS', 'INSTALL_AGE', 'TOTAL_VM_BYTES', 'AVAILABLE_VM_BYTES', 'SYS_MEM_USG_PER', 'SEVERITY']
    detailed_crash_df = pd.DataFrame(crash_lis, columns=df_cols)
    #print detailed_crash_df.shape
-   print detailed_crash_df.head()
+   #print detailed_crash_df.head()
    detailed_crash_df.to_csv('/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017.DETAILED.CRASH.DF.csv')
    '''
    Dataframe analysis
    '''
-   #doReasonAnalysis(detailed_crash_df)
+   doReasonAnalysis(detailed_crash_df)
    
