@@ -38,6 +38,14 @@ def getVulnImpact(parsed_html):
             vulns.append(vuln_impact)
     return vulns
 
+def getVulnBugzillaURL(parsed_html):
+    dict_ = {}
+    unparsed_dumps = parsed_html.body.findAll('section', attrs={'class':'cve'})
+    for cve_content in unparsed_dumps:
+       cve_content = str(cve_content)
+       print cve_content      
+    return dict_
+
 def processAdvisory(link_ls, pkl_output):
     adv_dict = {} 
     for advi_link in link_ls:
@@ -45,8 +53,11 @@ def processAdvisory(link_ls, pkl_output):
           response_ = urllib2.urlopen(advi_link)
           html_dump = response_.read()
           parsed_html    = BeautifulSoup(html_dump)
+
           vuln_data_ls = getVulnName(parsed_html)
           vuln_impact_ls = getVulnImpact(parsed_html)
+          vuln_bug_list  = getVulnBugzillaURL(parsed_html)
+
           name_and_impact = zip(vuln_data_ls, vuln_impact_ls) # list of tuples (description, severity)
           #print name_and_impact
           #print  advi_link, vuln_data, vuln_impact    

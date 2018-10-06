@@ -106,6 +106,7 @@ def getCrashAgeBySign(prod_df, signs, prod):
         age_list = sign_prod_df['INSTALL_AGE'].tolist()
         age_dis  = dict(Counter(age_list))
         print 'Product:{}, Signature:{}, Age distribution:{}'.format(prod, sign, age_dis)
+        print '='*10
     
 
 def doReasonAnalysis(df_p):
