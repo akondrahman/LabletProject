@@ -10,8 +10,28 @@ import csv
 from collections import Counter 
 
 def getAdvData(file_):
+    dict_ret={}
     adv_dic = pickle.load(open(file_, 'rb'))
-    return adv_dic 
+    for adv_, cve_details in adv_dic.iteritems():
+        cve_name   = cve_details[0]
+        cve_impact = cve_details[1]
+        bug_ids    = cve_details[2]
+        if 'buglist.cgi' in bug_ids:
+           bugs = bug_ids.split('=')[1]
+           bug_lis = bugs.split('%')
+           bug_lis = [x_.replace('2C', '') for x_ in bug_lis]
+           bug_lis = [int(x_) for x_ in bug_lis if len(x_) > 0]
+           for bug_ in bug_lis:
+               if bug_ not in dict_ret:
+                  dict_ret[bug_] = (adv_, cve_name, cve_impact)
+        else: 
+           bug = bug_ids.split('=')[1]
+           bug = bug.replace(' ', '')
+           bug = int(bug)
+           if bug not in dict_ret:
+              dict_ret[bug] = (adv_, cve_name, cve_impact)
+
+    return dict_ret 
 
 def getAdvBugData(fil_):
     dic_   = {} 
@@ -138,7 +158,7 @@ if __name__=='__main__':
    '''
    adv_vul_dat = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017.Advisory.Severity.PKL'
    adv_cve_dic = getAdvData(adv_vul_dat)
-   #print adv_cve_dic
+   print adv_cve_dic  ## this is a dict where the key is bugzilla IDs, and the values are (cve details, impact, and advisory name)
    adv_bug_dat = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017.Advisory.Bug.Mapping.csv'
    adv_bug_dic = getAdvBugData(adv_bug_dat)
    #print adv_bug_dic
@@ -155,5 +175,5 @@ if __name__=='__main__':
    '''
    Dataframe analysis
    '''
-   doReasonAnalysis(detailed_crash_df)
+   #doReasonAnalysis(detailed_crash_df)
    
