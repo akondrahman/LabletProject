@@ -10,6 +10,11 @@ import csv
 from collections import Counter 
 
 def getAdvData(file_):
+    adv_dic = pickle.load(open(file_, 'rb'))
+    return adv_dic
+
+def getDetailedAdvData(file_):
+    # not used 
     dict_ret={}
     adv_dic = pickle.load(open(file_, 'rb'))
     for adv_, cve_details in adv_dic.iteritems():
@@ -87,7 +92,6 @@ def getCrashDetails(fil_, cra_lis, cve_dic):
         crashLink  = tup_ite[2]
         if crashLink in crash_meta_data:
             sign, prod, reason, os, install_age, tot_vm, ava_vm, sys_mem_usg = '', '', '', '', '', '', '', ''
-            cve_nam, cve_imp = '', ''
             list_of_tuples = crash_meta_data[crashLink]
             for tup_ in list_of_tuples:
                 key_ = tup_[0]
@@ -117,12 +121,8 @@ def getCrashDetails(fil_, cra_lis, cve_dic):
                     ava_vm = ava_vm.split('b')[0]
                 elif(key_=='System Memory Use Percentage'):
                     sys_mem_usg = val_     
-        if bugID in cve_dic: 
-            cve_det = cve_dic[bugID]
-            cve_nam = cve_det[1]
-            cve_imp = cve_det[2]
 
-        tup_track = (crashLink, advisoryID, bugID, sign, prod, reason, os, install_age, tot_vm, ava_vm, sys_mem_usg, cve_nam, cve_imp)  
+        tup_track = (crashLink, advisoryID, bugID, sign, prod, reason, os, install_age, tot_vm, ava_vm, sys_mem_usg)  
         final_ls.append(tup_track)
     return final_ls                
 
@@ -180,6 +180,7 @@ if __name__=='__main__':
    detailed_crash_df = pd.DataFrame(crash_lis, columns=df_cols)
    #print detailed_crash_df.shape
    print detailed_crash_df.head()
+   print np.unique(detailed_crash_df['CVE_NAME'].tolist())
    '''
    Dataframe analysis
    '''
