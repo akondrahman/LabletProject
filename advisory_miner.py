@@ -38,12 +38,17 @@ def getVulnImpact(parsed_html):
             vulns.append(vuln_impact)
     return vulns
 
-def getVulnBugzillaURL(parsed_html):
+def getVulnBugzillaURL(parsed_html, advi_link):
     dict_ = {}
-    unparsed_dumps = parsed_html.body.findAll('section', attrs={'class':'cve'})
-    for cve_content in unparsed_dumps:
-       cve_content = str(cve_content)
-       print cve_content      
+    # unparsed_dumps = parsed_html.body.findAll('section', attrs={'class':'cve'})
+    unparsed_dumps = parsed_html.body.findAll('li')
+    for bug_url_content in unparsed_dumps:
+       bug_url_content = str(bug_url_content)
+       if 'a href="https://bugzilla.mozilla.org/' in bug_url_content:
+           print advi_link 
+           bug_url = bug_url_content.split('"')[1].split('"')[0]
+           print bug_url
+           print '='*50  
     return dict_
 
 def processAdvisory(link_ls, pkl_output):
@@ -56,7 +61,7 @@ def processAdvisory(link_ls, pkl_output):
 
           vuln_data_ls = getVulnName(parsed_html)
           vuln_impact_ls = getVulnImpact(parsed_html)
-          vuln_bug_list  = getVulnBugzillaURL(parsed_html)
+          vuln_bug_list  = getVulnBugzillaURL(parsed_html, advi_link)
 
           name_and_impact = zip(vuln_data_ls, vuln_impact_ls) # list of tuples (description, severity)
           #print name_and_impact
