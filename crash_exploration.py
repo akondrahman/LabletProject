@@ -98,7 +98,16 @@ def getCrashDetails(fil_, cra_lis):
         tup_track = (crashLink, advisoryID, bugID, sign, prod, reason, os, install_age, tot_vm, ava_vm, sys_mem_usg)  
         final_ls.append(tup_track)
     return final_ls                
-           
+
+def getCrashAgeBySign(prod_df, signs, prod):
+    signs = np.unique(signs)
+    for sign in signs:
+        sign_prod_df = prod_df[prod_df['CRASH_SIGN']==sign]
+        age_list = sign_prod_df['INSTALL_AGE'].tolist()
+        age_dis  = dict(Counter(age_list))
+        print 'Product:{}, Signature:{}, Age distribution:{}'.format(prod, sign, age_dis)
+    
+
 def doReasonAnalysis(df_p):
     prod_list = np.unique( df_p['PRODUCT'].tolist() )         
     for prod in prod_list: 
@@ -115,6 +124,8 @@ def doReasonAnalysis(df_p):
         print 'Distribution of crash reasons:', reason_freq
         print '*'*25
         print 'Distribution of crash signs:', sign_freq
+        print '*'*25
+        getCrashAgeBySign(prod_full_df, sign_list, prod)
         print '*'*25
         print '-'*50
 
@@ -139,7 +150,7 @@ if __name__=='__main__':
    df_cols = ['CRASH', 'ADVISORY', 'BUGID', 'CRASH_SIGN', 'PRODUCT', 'CRASH_REASON', 'OS', 'INSTALL_AGE', 'TOTAL_VM_BYTES', 'AVAILABLE_VM_BYTES', 'SYS_MEM_USG_PER']
    detailed_crash_df = pd.DataFrame(crash_lis, columns=df_cols)
    #print detailed_crash_df.shape
-   #print detailed_crash_df.head()
+   print detailed_crash_df.head()
    '''
    Dataframe analysis
    '''
