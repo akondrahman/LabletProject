@@ -79,7 +79,10 @@ def getCrashDetails(fil_, cra_lis):
                 elif (key_=='OS'):
                     os = val_
                 elif(key_=='Install Age'):
-                    install_age = val_                    
+                    install_age = val_  
+                    install_age = install_age.replace(' ', '') 
+                    install_age = install_age.replace(',', '')  
+                    install_age = install_age.split('s')[0]
                 elif (key_=='Total Virtual Memory'):
                     tot_vm = val_
                     tot_vm = tot_vm.replace(',', '')
@@ -108,8 +111,11 @@ def doReasonAnalysis(df_p):
         print '-'*50
         print prod 
         print 'Crash count:', prod_full_df_len 
+        print '*'*25
         print 'Distribution of crash reasons:', reason_freq
+        print '*'*25
         print 'Distribution of crash signs:', sign_freq
+        print '*'*25
         print '-'*50
 
 
