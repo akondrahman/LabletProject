@@ -103,10 +103,13 @@ def doReasonAnalysis(df_p):
         prod_full_df_len, prod_full_df_cols = prod_full_df.shape 
         reason_list = prod_full_df['CRASH_REASON'].tolist()
         reason_freq = dict(Counter(reason_list))
+        sign_list   = prod_full_df['CRASH_SIGN'].tolist()
+        sign_freq   = dict(Counter(sign_list))
         print '-'*50
         print prod 
         print 'Crash count:', prod_full_df_len 
-        print reason_freq
+        print 'Distribution of crash reasons:', reason_freq
+        print 'Distribution of crash signs:', sign_freq
         print '-'*50
 
 
