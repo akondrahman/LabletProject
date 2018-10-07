@@ -122,11 +122,11 @@ if __name__=='__main__':
 #    meta_out_dir  = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/meta_crash_dump_out/'
 #    thread_out_dir  = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/thread_crash_dump_out/'
 
-   inp_fil_ = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/2017.crashID.txt'
-   meta_out_dir  = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/meta_crash_dump_out/'
-   thread_out_dir  = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/thread_crash_dump_out/'
+#    inp_fil_ = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/2017.crashID.txt'
+#    meta_out_dir  = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/meta_crash_dump_out/'
+#    thread_out_dir  = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/raw-moz-crash-reports/thread_crash_dump_out/'
 
    crashIDs = getOutputLines(inp_fil_)	
 
    getCrashMetaData(crashIDs, meta_out_dir)
-   getCrashThread(crashIDs, thread_out_dir)
+   #getCrashThread(crashIDs, thread_out_dir)
