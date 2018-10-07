@@ -83,7 +83,7 @@ def getAdvBugCrashData(dic_, fil_):
                    final_list.append(tuple_add)
     return final_list
     
-def getCrashDetails(fil_, cra_lis, bug_det_dic, bug_cve_dict):
+def getCrashDetails(fil_, cra_lis, bug_det_dic, bug_cve_dict, frame_dict):
     final_ls = []
     crash_meta_data = pickle.load(open(fil_, 'rb'))   
     for tup_ite in cra_lis:
@@ -134,9 +134,11 @@ def getCrashDetails(fil_, cra_lis, bug_det_dic, bug_cve_dict):
                     ava_vm = ava_vm.split('b')[0]
                     ava_vm = int(ava_vm)
                 elif(key_=='System Memory Use Percentage'):
-                    sys_mem_usg = val_     
-
-        tup_track = (crashLink, advisoryID, bugID, sign, prod, reason, os, install_age, tot_vm, ava_vm, sys_mem_usg, severity, cve_name, cve_impact)  
+                    sys_mem_usg = val_    
+        frame_list = []
+        if crashLink in frame_dict: 
+           frame_list = frame_dict[crashLink]
+        tup_track = (crashLink, advisoryID, bugID, sign, prod, reason, os, install_age, tot_vm, ava_vm, sys_mem_usg, severity, cve_name, cve_impact, frame_list)  
         final_ls.append(tup_track)
     return final_ls                
 
@@ -203,11 +205,14 @@ def constructFullDataFrameForAnalysis(year_para):
    bug_cve_dat = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/' + year_para + '/'+ year_para +'.BUG.CVE.MAPPING.csv'
    bug_cve_dic = mapBug2CVE(bug_cve_dat)
 
+   frame_dat   = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/' + year_para + '/'+ year_para +'_CRASH_THREAD.PKL'
+   frame_dic   = pickle.load(open(frame_dat, 'rb'))
+
    crash_dat   = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/' + year_para + '/'+ year_para +'_CRASH_METADATA.PKL'
-   crash_lis   = getCrashDetails(crash_dat, adv_bug_cra, bug_det_dic, bug_cve_dic)
+   crash_lis   = getCrashDetails(crash_dat, adv_bug_cra, bug_det_dic, bug_cve_dic, frame_dic)
    #print crash_lis
 
-   df_cols = ['CRASH', 'ADVISORY', 'BUGID', 'CRASH_SIGN', 'PRODUCT', 'CRASH_REASON', 'OS', 'INSTALL_AGE', 'TOTAL_VM_BYTES', 'AVAILABLE_VM_BYTES', 'SYS_MEM_USG_PER', 'BUG_SEVERITY', 'CVE_NAME', 'CVE_IMPACT']
+   df_cols = ['CRASH', 'ADVISORY', 'BUGID', 'CRASH_SIGN', 'PRODUCT', 'CRASH_REASON', 'OS', 'INSTALL_AGE', 'TOTAL_VM_BYTES', 'AVAILABLE_VM_BYTES', 'SYS_MEM_USG_PER', 'BUG_SEVERITY', 'CVE_NAME', 'CVE_IMPACT', 'FRAMES']
    detailed_crash_df = pd.DataFrame(crash_lis, columns=df_cols)
 
    detailed_crash_df['PROP_AVAL_VM'] = detailed_crash_df['AVAILABLE_VM_BYTES'] / detailed_crash_df['TOTAL_VM_BYTES']
@@ -280,11 +285,12 @@ def cveWiseVMAnalysis(df_p):
        ava_vm_per  = uni_cve_df['PROP_AVAL_VM'].tolist()
        ava_vm_per  = [x_ for x_ in ava_vm_per if x_ >= 0.0]
        ava_vm_per  = [x_ for x_ in ava_vm_per if x_ <= 1.0]
+       used_vm_per = [1.0 - x_ for x_ in ava_vm_per if x_ <= 1.0]
 
-       med_for_cve = getStats(ava_vm_per, cve)
-       list_for_plots.append(ava_vm_per)
+       med_for_cve = getStats(used_vm_per, cve)
+       list_for_plots.append(used_vm_per)
        med_lis.append(med_for_cve)
-   makeBoxplots(list_for_plots, 'Available VM Distribution', med_lis, unique_cves, 1.25 )
+   makeBoxplots(list_for_plots, 'Used VM Distribution', med_lis, unique_cves, 1.25 )
 
 def cveWiseSignAnalysis(df_p):
    unique_cves = list(np.unique(df_p[df_p['CVE_NAME']!='NOT_FOUND']['CVE_NAME'].tolist()))    
@@ -292,15 +298,30 @@ def cveWiseSignAnalysis(df_p):
        uni_cve_df   = df_p[df_p['CVE_NAME']==cve]
        crash_signs  = uni_cve_df['CRASH_SIGN'].tolist()
        cra_sig_dist = dict(Counter(crash_signs))
-       print 'CVE:{},CRASH_SIGNATURE_DISTRIBUTION:{}'.format(cve, cra_sig_dist)
+       print 'CVE:{},CRASH_COUNT:{},CRASH_SIGNATURE_DISTRIBUTION:{}'.format(cve, len(crash_signs), cra_sig_dist)
        print '='*50
 
+def cveWiseFrameAnalysis(df_p):
+   list_for_plots = []
+   med_lis = [] 
+   unique_cves = list(np.unique(df_p[df_p['CVE_NAME']!='NOT_FOUND']['CVE_NAME'].tolist()))    
+   for cve in unique_cves:
+       frame_cnt_list  = []
+       uni_cve_df      = df_p[df_p['CVE_NAME']==cve]
+       frames_per_cve  = uni_cve_df['FRAMES'].tolist() ## list of lists , each sub list is a list of frames for the crash 
+       for frames in frames_per_cve:
+           frame_cnt_list.append(len(frames))
+
+       med_for_cve = getStats(frame_cnt_list, cve)
+       list_for_plots.append(frame_cnt_list)
+       med_lis.append(med_for_cve)
+   makeBoxplots(list_for_plots, 'Frame Count Distribution', med_lis, unique_cves, 1000 )
 
 if __name__=='__main__':
    detailed_crash_df_2017 = constructFullDataFrameForAnalysis('2017')
    detailed_crash_df_2018 = constructFullDataFrameForAnalysis('2018')
    detailed_crash_df_full = pd.concat([detailed_crash_df_2017, detailed_crash_df_2018]) ## concat expects an iterable 
-   #print detailed_crash_df_full.shape
+   print detailed_crash_df_full.shape
    print detailed_crash_df_full.head()
    
    detailed_crash_df_full.to_csv('/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017.DETAILED.CRASH.DF.csv')
@@ -317,8 +338,9 @@ if __name__=='__main__':
    '''
    #doReasonAnalysis(detailed_crash_df_full)
    # CVE wise analysis 
-#    cveWiseAgeAnalysis(detailed_crash_df_full)
-#    cveWiseSysMemAnalysis(detailed_crash_df_full)
-#    cveWiseVMAnalysis(detailed_crash_df_full)
-   cveWiseSignAnalysis(detailed_crash_df_full)
+   #cveWiseAgeAnalysis(detailed_crash_df_full)
+   #cveWiseSysMemAnalysis(detailed_crash_df_full)
+   #cveWiseVMAnalysis(detailed_crash_df_full)
+   #cveWiseSignAnalysis(detailed_crash_df_full)
+   cveWiseFrameAnalysis(detailed_crash_df_full)
    
