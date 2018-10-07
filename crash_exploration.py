@@ -208,23 +208,25 @@ def constructFullDataFrameForAnalysis(year_para):
    df_cols = ['CRASH', 'ADVISORY', 'BUGID', 'CRASH_SIGN', 'PRODUCT', 'CRASH_REASON', 'OS', 'INSTALL_AGE', 'TOTAL_VM_BYTES', 'AVAILABLE_VM_BYTES', 'SYS_MEM_USG_PER', 'BUG_SEVERITY', 'CVE_NAME', 'CVE_IMPACT']
    detailed_crash_df = pd.DataFrame(crash_lis, columns=df_cols)
 
+   detailed_crash_df = detailed_crash_df[detailed_crash_df['TOTAL_VM_BYTES'] != '']
+
    return detailed_crash_df    
 
 
 if __name__=='__main__':
-   year ='2018'
-
-   detailed_crash_df = constructFullDataFrameForAnalysis(year)
-   #print detailed_crash_df.shape
-   print detailed_crash_df.head()
+   detailed_crash_df_2017 = constructFullDataFrameForAnalysis('2017')
+   detailed_crash_df_2018 = constructFullDataFrameForAnalysis('2018')
+   detailed_crash_df_full = pd.concat(detailed_crash_df_2017, detailed_crash_df_2018)
+   #print detailed_crash_df_full.shape
+   print detailed_crash_df_full.head()
    
-   detailed_crash_df.to_csv('/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017.DETAILED.CRASH.DF.csv')
-   unique_bug_IDs_with_cve = list(np.unique(detailed_crash_df[detailed_crash_df['CVE_NAME']!='NOT_FOUND']['BUGID'].tolist()))
-   df_with_cve = detailed_crash_df[detailed_crash_df['CVE_NAME']!='NOT_FOUND']
+   detailed_crash_df_full.to_csv('/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017.DETAILED.CRASH.DF.csv')
+   unique_bug_IDs_with_cve = list(np.unique(detailed_crash_df_full[detailed_crash_df_full['CVE_NAME']!='NOT_FOUND']['BUGID'].tolist()))
+   df_with_cve = detailed_crash_df_full[detailed_crash_df_full['CVE_NAME']!='NOT_FOUND']
    print 'Dataframe size with CVEs:', df_with_cve.shape 
    print 'Number of bug IDs with CVE:', len(unique_bug_IDs_with_cve)
    '''
    Dataframe analysis
    '''
-   #doReasonAnalysis(detailed_crash_df)
+   #doReasonAnalysis(detailed_crash_df_full)
    
