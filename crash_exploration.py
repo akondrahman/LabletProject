@@ -212,21 +212,38 @@ def constructFullDataFrameForAnalysis(year_para):
 
    return detailed_crash_df    
 
+def getStats(ls, name):
+    min_, max_, avg_, med_ = min(ls), max(ls), np.mean(ls), np.median(ls) 
+    print 'CVE:{},MIN:{},MAX:{},AVG:{},MED:{}'.format(name, min_, max_, avg_, med_)
+    print '='*50
+
+def cveWiseAnalysis(df_p):
+   unique_cves = list(np.unique(df_p[df_p['CVE_NAME']!='NOT_FOUND']['CVE_NAME'].tolist()))    
+   for cve in unique_cves:
+       uni_cve_df = df_p[df_p['CVE_NAME']==cve]
+       install_age = uni_cve_df['INSTALL_AGE'].tolist()
+       getStats(install_age, cve)
+
 
 if __name__=='__main__':
    detailed_crash_df_2017 = constructFullDataFrameForAnalysis('2017')
    detailed_crash_df_2018 = constructFullDataFrameForAnalysis('2018')
-   detailed_crash_df_full = pd.concat(detailed_crash_df_2017, detailed_crash_df_2018)
+   detailed_crash_df_full = pd.concat([detailed_crash_df_2017, detailed_crash_df_2018]) ## concat expects an iterable 
    #print detailed_crash_df_full.shape
    print detailed_crash_df_full.head()
    
    detailed_crash_df_full.to_csv('/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017.DETAILED.CRASH.DF.csv')
    unique_bug_IDs_with_cve = list(np.unique(detailed_crash_df_full[detailed_crash_df_full['CVE_NAME']!='NOT_FOUND']['BUGID'].tolist()))
    df_with_cve = detailed_crash_df_full[detailed_crash_df_full['CVE_NAME']!='NOT_FOUND']
+   print '='*50
    print 'Dataframe size with CVEs:', df_with_cve.shape 
    print 'Number of bug IDs with CVE:', len(unique_bug_IDs_with_cve)
+   unique_cves = list(np.unique(detailed_crash_df_full[detailed_crash_df_full['CVE_NAME']!='NOT_FOUND']['CVE_NAME'].tolist()))
+   print 'Number of unique CVEs:', len(unique_cves)
+   print '='*50
    '''
    Dataframe analysis
    '''
    #doReasonAnalysis(detailed_crash_df_full)
+   cveWiseAnalysis(detailed_crash_df_full)
    
