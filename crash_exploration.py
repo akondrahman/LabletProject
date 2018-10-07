@@ -103,7 +103,7 @@ def getCrashDetails(fil_, cra_lis, bug_det_dic, bug_cve_dict):
            cve_name, cve_impact   = bug_cve_dict[bugID]
 
         if crashLink in crash_meta_data:
-            sign, prod, reason, os, install_age, tot_vm, ava_vm, sys_mem_usg = '', '', '', '', '', '', '', ''
+            sign, prod, reason, os, install_age, tot_vm, ava_vm, sys_mem_usg = '', '', '', '', '', 0, 0, ''
             list_of_tuples = crash_meta_data[crashLink]
             for tup_ in list_of_tuples:
                 key_ = tup_[0]
@@ -126,11 +126,13 @@ def getCrashDetails(fil_, cra_lis, bug_det_dic, bug_cve_dict):
                     tot_vm = tot_vm.replace(',', '')
                     tot_vm = tot_vm.replace(' ', '')
                     tot_vm = tot_vm.split('b')[0]
+                    tot_vm = int(tot_vm)
                 elif(key_=='Available Virtual Memory'):
                     ava_vm = val_                         
                     ava_vm = ava_vm.replace(',', '')
                     ava_vm = ava_vm.replace(' ', '')
                     ava_vm = ava_vm.split('b')[0]
+                    ava_vm = int(ava_vm)
                 elif(key_=='System Memory Use Percentage'):
                     sys_mem_usg = val_     
 
@@ -208,22 +210,81 @@ def constructFullDataFrameForAnalysis(year_para):
    df_cols = ['CRASH', 'ADVISORY', 'BUGID', 'CRASH_SIGN', 'PRODUCT', 'CRASH_REASON', 'OS', 'INSTALL_AGE', 'TOTAL_VM_BYTES', 'AVAILABLE_VM_BYTES', 'SYS_MEM_USG_PER', 'BUG_SEVERITY', 'CVE_NAME', 'CVE_IMPACT']
    detailed_crash_df = pd.DataFrame(crash_lis, columns=df_cols)
 
-   detailed_crash_df = detailed_crash_df[detailed_crash_df['TOTAL_VM_BYTES'] != '']
+   detailed_crash_df['PROP_AVAL_VM'] = detailed_crash_df['AVAILABLE_VM_BYTES'] / detailed_crash_df['TOTAL_VM_BYTES']
+
+   detailed_crash_df = detailed_crash_df[detailed_crash_df['TOTAL_VM_BYTES'] > 0]
 
    return detailed_crash_df    
 
 def getStats(ls, name):
-    min_, max_, avg_, med_ = min(ls), max(ls), np.mean(ls), np.median(ls) 
-    print 'CVE:{},MIN:{},MAX:{},AVG:{},MED:{}'.format(name, min_, max_, avg_, med_)
+    len_, min_, max_, avg_, med_ = len(ls), min(ls), max(ls), np.mean(ls), np.median(ls) 
+    print 'CVE:{},CNT:{},MIN:{},MAX:{},AVG:{},MED:{}'.format(name, len_, min_, max_, avg_, med_)
     print '='*50
+    return med_
 
-def cveWiseAnalysis(df_p):
+def makeBoxplots(list_, name_, median_list, cve_names, ylim_max):
+    import matplotlib.pyplot as plt    
+
+    fig, ax = plt.subplots()
+    pos = np.array(range(len(list_))) + 1
+    bp = ax.boxplot(list_, sym='k+', positions=pos, notch=1, usermedians=median_list )
+
+    ax.set_xlabel('CVE')
+    ax.set_ylabel(name_)
+    plt.setp(bp['whiskers'], color='k')
+    plt.setp(bp['fliers'], markersize=3.0)
+    plt.ylim(0, ylim_max)
+
+    
+    fig.savefig(name_ + '.png')   
+    plt.close(fig)    
+
+
+
+def cveWiseAgeAnalysis(df_p):
+   list_for_plots = []
+   med_lis = [] 
    unique_cves = list(np.unique(df_p[df_p['CVE_NAME']!='NOT_FOUND']['CVE_NAME'].tolist()))    
    for cve in unique_cves:
        uni_cve_df = df_p[df_p['CVE_NAME']==cve]
        install_age = uni_cve_df['INSTALL_AGE'].tolist()
-       getStats(install_age, cve)
+       install_age = [int(x_) for x_ in install_age if len(x_)>0]
+       install_age = [x_ for x_ in install_age if x_ >= 0]
+       install_age = [float(x_)/float(3600) for x_ in install_age ] ### convert seconds to hours 
+       med_for_cve = getStats(install_age, cve)
+       list_for_plots.append(install_age)
+       med_lis.append(med_for_cve)
+   makeBoxplots(list_for_plots, 'Install Age Distribution', med_lis, unique_cves, 20000 )
 
+def cveWiseSysMemAnalysis(df_p):
+   list_for_plots = []
+   med_lis = [] 
+   unique_cves = list(np.unique(df_p[df_p['CVE_NAME']!='NOT_FOUND']['CVE_NAME'].tolist()))    
+   for cve in unique_cves:
+       uni_cve_df = df_p[df_p['CVE_NAME']==cve]
+       sys_mem_per = uni_cve_df['SYS_MEM_USG_PER'].tolist()
+       sys_mem_per = [int(x_) for x_ in sys_mem_per if len(x_)>0]
+       sys_mem_per = [x_ for x_ in sys_mem_per if x_ >= 0]
+
+       med_for_cve = getStats(sys_mem_per, cve)
+       list_for_plots.append(sys_mem_per)
+       med_lis.append(med_for_cve)
+   makeBoxplots(list_for_plots, 'Sys. Memory Distribution', med_lis, unique_cves, 100 )
+
+def cveWiseVMAnalysis(df_p):
+   list_for_plots = []
+   med_lis = [] 
+   unique_cves = list(np.unique(df_p[df_p['CVE_NAME']!='NOT_FOUND']['CVE_NAME'].tolist()))    
+   for cve in unique_cves:
+       uni_cve_df  = df_p[df_p['CVE_NAME']==cve]
+       ava_vm_per  = uni_cve_df['PROP_AVAL_VM'].tolist()
+       ava_vm_per  = [x_ for x_ in ava_vm_per if x_ >= 0.0]
+       ava_vm_per  = [x_ for x_ in ava_vm_per if x_ <= 1.0]
+
+       med_for_cve = getStats(ava_vm_per, cve)
+       list_for_plots.append(ava_vm_per)
+       med_lis.append(med_for_cve)
+   makeBoxplots(list_for_plots, 'Available VM Distribution', med_lis, unique_cves, 1.25 )
 
 if __name__=='__main__':
    detailed_crash_df_2017 = constructFullDataFrameForAnalysis('2017')
@@ -245,5 +306,7 @@ if __name__=='__main__':
    Dataframe analysis
    '''
    #doReasonAnalysis(detailed_crash_df_full)
-   cveWiseAnalysis(detailed_crash_df_full)
+   cveWiseAgeAnalysis(detailed_crash_df_full)
+   cveWiseSysMemAnalysis(detailed_crash_df_full)
+   cveWiseVMAnalysis(detailed_crash_df_full)
    
