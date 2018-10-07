@@ -286,6 +286,16 @@ def cveWiseVMAnalysis(df_p):
        med_lis.append(med_for_cve)
    makeBoxplots(list_for_plots, 'Available VM Distribution', med_lis, unique_cves, 1.25 )
 
+def cveWiseSignAnalysis(df_p):
+   unique_cves = list(np.unique(df_p[df_p['CVE_NAME']!='NOT_FOUND']['CVE_NAME'].tolist()))    
+   for cve in unique_cves:
+       uni_cve_df   = df_p[df_p['CVE_NAME']==cve]
+       crash_signs  = uni_cve_df['CRASH_SIGN'].tolist()
+       cra_sig_dist = dict(Counter(crash_signs))
+       print 'CVE:{},CRASH_SIGNATURE_DISTRIBUTION:{}'.format(cve, cra_sig_dist)
+       print '='*50
+
+
 if __name__=='__main__':
    detailed_crash_df_2017 = constructFullDataFrameForAnalysis('2017')
    detailed_crash_df_2018 = constructFullDataFrameForAnalysis('2018')
@@ -306,7 +316,9 @@ if __name__=='__main__':
    Dataframe analysis
    '''
    #doReasonAnalysis(detailed_crash_df_full)
-   cveWiseAgeAnalysis(detailed_crash_df_full)
-   cveWiseSysMemAnalysis(detailed_crash_df_full)
-   cveWiseVMAnalysis(detailed_crash_df_full)
+   # CVE wise analysis 
+#    cveWiseAgeAnalysis(detailed_crash_df_full)
+#    cveWiseSysMemAnalysis(detailed_crash_df_full)
+#    cveWiseVMAnalysis(detailed_crash_df_full)
+   cveWiseSignAnalysis(detailed_crash_df_full)
    
