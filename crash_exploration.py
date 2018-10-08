@@ -315,7 +315,7 @@ def cveWiseFrameAnalysis(df_p):
        med_for_cve = getStats(frame_cnt_list, cve)
        list_for_plots.append(frame_cnt_list)
        med_lis.append(med_for_cve)
-   makeBoxplots(list_for_plots, 'Frame Count Distribution', med_lis, unique_cves, 1000 )
+   makeBoxplots(list_for_plots, 'Frame Count Distribution', med_lis, unique_cves, 125 )
 
 if __name__=='__main__':
    detailed_crash_df_2017 = constructFullDataFrameForAnalysis('2017')
@@ -330,7 +330,8 @@ if __name__=='__main__':
    print '='*50
    print 'Dataframe size with CVEs:', df_with_cve.shape 
    print 'Number of bug IDs with CVE:', len(unique_bug_IDs_with_cve)
-   unique_cves = list(np.unique(detailed_crash_df_full[detailed_crash_df_full['CVE_NAME']!='NOT_FOUND']['CVE_NAME'].tolist()))
+   cve_lis = detailed_crash_df_full[detailed_crash_df_full['CVE_NAME']!='NOT_FOUND']['CVE_NAME'].tolist()
+   unique_cves = list(np.unique( cve_lis  ))
    print 'Number of unique CVEs:', len(unique_cves)
    print '='*50
    '''
