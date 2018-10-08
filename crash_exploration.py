@@ -323,6 +323,7 @@ if __name__=='__main__':
    detailed_crash_df_full = pd.concat([detailed_crash_df_2017, detailed_crash_df_2018]) ## concat expects an iterable 
    print detailed_crash_df_full.shape
    print detailed_crash_df_full.head()
+   pickle.dump( detailed_crash_df_full, open( '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/FULL_DATSET.PKL' , 'wb' ) )
    
    detailed_crash_df_full.to_csv('/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2017/2017.DETAILED.CRASH.DF.csv')
    unique_bug_IDs_with_cve = list(np.unique(detailed_crash_df_full[detailed_crash_df_full['CVE_NAME']!='NOT_FOUND']['BUGID'].tolist()))
@@ -343,5 +344,5 @@ if __name__=='__main__':
    #cveWiseSysMemAnalysis(detailed_crash_df_full)
    #cveWiseVMAnalysis(detailed_crash_df_full)
    #cveWiseSignAnalysis(detailed_crash_df_full)
-   cveWiseFrameAnalysis(detailed_crash_df_full)
+   #cveWiseFrameAnalysis(detailed_crash_df_full)
    
