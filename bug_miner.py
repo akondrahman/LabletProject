@@ -8,7 +8,7 @@ import numpy as np
 import json 
 import requests
 import cPickle as pickle 
-
+api_token = ''
 
 def processDict(dict_p):
     data_list = []
@@ -17,8 +17,7 @@ def processDict(dict_p):
        for bug_ in bug_data:
            
            alias          = bug_['alias']
-           if 'cve' in alias:
-               print 'Alias:', alias 
+
            involved_count = len(bug_['cc']) + 1 # cc people + assigned 
            comment_count  = bug_['comment_count']
            component      = bug_['component']           
@@ -48,7 +47,7 @@ def getBugData(df_param):
     bugIDs = np.unique( df_param['BUG_ID'].tolist() )
     for bugID  in bugIDs:
         req_url  = 'https://bugzilla.mozilla.org/rest/bug/' + str(bugID).strip()    
-        bug_data = requests.get(req_url)           
+        bug_data = requests.get(req_url, params={'api_key': api_token })           
         bug_dict = bug_data.json()
         # print bug_dict 
         data_for_bug = processDict(bug_dict)
@@ -60,9 +59,12 @@ def getBugData(df_param):
 
 def getSecBugData(lis_par):
     all_bug_data = {}
-    for bugID  in lis_par:
+    for bugIDTuple  in lis_par:
+        bugID, bugSeverity = bugIDTuple
         req_url  = 'https://bugzilla.mozilla.org/rest/bug/' + str(bugID).strip()    
-        bug_data = requests.get(req_url)           
+        bug_data = requests.get(req_url, params={'api_key': api_token })  
+        print bugID , bugSeverity
+        # print bug_data         
         bug_dict = bug_data.json()
         # print bug_dict 
         data_for_bug = processDict(bug_dict)
@@ -70,6 +72,7 @@ def getSecBugData(lis_par):
         if bugID not in all_bug_data:
            all_bug_data[bugID] = data_for_bug
         # print '*'*50
+        pickle.dump( all_bug_data, open('TMP_SEC_CMT.PKL', 'wb'))      
     return all_bug_data
 
 
