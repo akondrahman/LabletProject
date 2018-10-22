@@ -58,21 +58,25 @@ def getBugData(df_param):
     return all_bug_data
 
 def getSecBugData(lis_par):
+    print 'Need to process:', len(lis_par)
     all_bug_data = {}
+    already = pickle.load(open('TMP_SEC_CMT_1.PKL', 'rb'))
+    print 'Already processed:', len(already)
     for bugIDTuple  in lis_par:
         bugID, bugSeverity = bugIDTuple
-        req_url  = 'https://bugzilla.mozilla.org/rest/bug/' + str(bugID).strip()    
-        bug_data = requests.get(req_url, params={'api_key': api_token })  
-        print bugID , bugSeverity
-        # print bug_data         
-        bug_dict = bug_data.json()
-        # print bug_dict 
-        data_for_bug = processDict(bug_dict)
-        # print bugID, data_for_bug
-        if bugID not in all_bug_data:
-           all_bug_data[bugID] = data_for_bug
-        # print '*'*50
-        pickle.dump( all_bug_data, open('TMP_SEC_CMT.PKL', 'wb'))      
+        if bugID not in already:
+            req_url  = 'https://bugzilla.mozilla.org/rest/bug/' + str(bugID).strip()    
+            bug_data = requests.get(req_url, params={'api_key': api_token })  
+            print bugID , bugSeverity
+            # print bug_data         
+            bug_dict = bug_data.json()
+            # print bug_dict 
+            data_for_bug = processDict(bug_dict)
+            # print bugID, data_for_bug
+            if bugID not in all_bug_data:
+               all_bug_data[bugID] = data_for_bug
+            # print '*'*50
+            pickle.dump( all_bug_data, open('TMP_SEC_CMT.PKL', 'wb'))      
     return all_bug_data
 
 
