@@ -7,6 +7,9 @@ May 11, 2019
 from launchpadlib.launchpad import Launchpad 
 launchpad = Launchpad.login_anonymously('just testing', 'production') 
 import numpy as np 
+import os 
+import time 
+import cPickle as pickle 
 
 def dumpContentIntoFile(strP, fileP):
   strP = strP.encode('utf-8')
@@ -17,37 +20,65 @@ def dumpContentIntoFile(strP, fileP):
 
 def getCommentForBug(bugID):
     bugStr = ''
-    if bugID in launchpad.bugs: 
-        the_bug = launchpad.bugs[bug]  
-        bug_comments = the_bug.messages
-        bug_cves     = the_bug.cves 
-        if len(bug_comments) > 0 : 
-            for comment in bug_comments:
-                for cve_ in bug_cves:
-                    str1_ = 'BUG_ID:' + str(bugID) + '\n' + '-'*10 + '\n'
-                    str3_ = 'CVE:' + cve_ + '\n' + '-'*10 + '\n'
-                    str4_ = comment + '\n' + '-'*10 + '\n'
+    csvStr = ''
+    comment_index = 0 
+    the_bug      = launchpad.bugs[bugID]  
+    bug_comments = the_bug.messages
+    bug_cve      = the_bug.title  
+    if len(bug_comments) > 0 : 
+        print 'Found {} comments for bug#{}'.format(len(bug_comments), bugID)
+        for comment_obj in bug_comments:
+                str1_ = 'BUG_ID:' + str(bugID) + '\n' + '-'*10 + '\n'
+                str2_ = 'CVE:' + bug_cve + '\n' + '-'*10 + '\n'
+                comment_content = comment_obj.content 
+                comment_subject = comment_obj.subject 
+                comment_owner   = comment_obj.owner 
+                str3_ = 'SUBJECT:' + comment_subject + '\n' + '-'*10 + '\n'                    
+                str4_ = 'COMMENT_INDEX:' + str(comment_index) + '\n' + comment_content + '\n' + '-'*10 + '\n'
+            
+                bugStr = bugStr  + str1_ + str2_ + str3_ + str4_ + '\n' + '='*50
+                csvStr = csvStr + str(bugID) + ',' + bug_cve +  ',' + str(comment_index) + ',' + str(comment_owner ) + '\n'
+                comment_index += 1 
                 
-                    bugStr = bugStr  + str1_ + str2_ + str3_ + str4_ + '\n' + '='*50
     else: 
-        print 'Did not find bug#', bugID
-    return bugStr
+        print 'No comments found  for bug#', bugID 
+    # print bugStr
+    return bugStr, csvStr
 
-def getBugComments(file_name, out_file):
+def getBugComments(file_name, out_file, out_csv_file, pkl_out_file): 
+    pkl_dict = {}
     full_str = '' 
+    complete_csv_str = ''
+    bug_pro_ind = 0 
     with open(file_name, 'rU') as f_:
          lines = f_.readlines()
     ID_list = [int(x_) for x_ in lines if x_!= '\n']
     unique_IDs = np.unique(ID_list) 
+    print 'Bugs to analyze:', len( unique_IDs )
+    print '*'*50 
     for bugID in unique_IDs: 
-        bug_str = getCommentForBug(bugID)
+        bug_str, csv_str  = getCommentForBug(bugID)
+        # print bug_str
         full_str = full_str + '\n' + bug_str
-    dumpContentIntoFile(full_str, out_file) 
+        complete_csv_str = complete_csv_str + csv_str 
+        bug_pro_ind += 1 
+        pkl_dict[bugID] = (bug_str, csv_str) 
     
+    if ((bug_pro_ind%500)==0):
+        dumpContentIntoFile(full_str, 'UBUNTU_TMP_BUG_REPORT.txt')
+        dumpContentIntoFile(complete_csv_str, 'UBUNTU_TMP_BUG_REPORT_MAPPING.csv')      
+        time.sleep( 60 )       
+    
+    dumpContentIntoFile(full_str, out_file) 
+    dumpContentIntoFile(complete_csv_str, out_csv_file)  
+    pickle.dump(pkl_dict, open('TMP_CMT.PKL', 'wb'))   
+
 
 
 if __name__=='__main__':
     bugID_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/dataset-bugreport-synthesis/ost-with-cves-only/OST_BUG_IDS_RES.txt' 
     output_comment_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/OSTK_CVE_BUG_REPORT_COMMENTS.txt'
+    output_csv_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/OSTK_CVE_BUG_REPORT_COMMENT_MAP.csv'
+    output_pkl_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/OSTK_CVE_BUG_REPORT_COMMENT_ALL.PKL'
 
-    getBugComments(bugID_file, output_comment_file) 
+    getBugComments(bugID_file, output_comment_file, output_csv_file, output_pkl_file)  
