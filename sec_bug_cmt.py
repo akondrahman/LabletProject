@@ -8,7 +8,8 @@ import requests
 import json 
 import cPickle as pickle 
 import numpy as np 
-api_token = ''
+import os 
+api_token = 'mWYEjiA4nOsii23LqFSuhotZyXJic5hRmMc5bFdm'
 
 def getSecurityBugIDs():
     lis = []
@@ -52,6 +53,66 @@ def getComments(lis_par):
             print '='*50         
     return list_ 
 
+def dumpContentIntoFile(strP, fileP):
+  strP = strP.encode('utf-8')
+  fileToWrite = open( fileP, 'w')
+  fileToWrite.write(strP )
+  fileToWrite.close()
+  return str(os.stat(fileP).st_size)
+
+
+def dumpComment(prop_dict1, prop_dict2, comment_lis):        
+    fullStr = ''
+    index = 0 
+    alias_dict = {}
+    for k_, v_ in prop_dict1.iteritems():
+        alias = v_[0]
+        if alias != None:
+            alias = alias.lower() 
+            if 'cve' in alias:
+               if alias not in alias_dict:
+                  alias_dict[k_] = alias 
+    for k_, v_ in prop_dict2.iteritems():
+        alias = v_[0]
+        if alias != None:
+            alias = alias.lower() 
+            if 'cve' in alias:
+               if alias not in alias_dict:
+                  alias_dict[k_] = alias 
+    print 'No of comments to go through:', len(comment_lis)
+    print 'No. of bugs with CVEs:', len(alias_dict)
+    for tup_ in comment_lis:
+        alias = 'NOT_MENTIONED'
+        bugID   = tup_[0]    
+        sec_tag = tup_[1]    
+        coment  = tup_[2]    
+        if bugID in alias_dict:
+            alias = alias_dict[bugID]
+
+            str0_ = 'INDEX:' + str(index) + '\n' + '-'*10 + '\n' 
+            str1_ = 'BUG_ID:' + str(bugID) + '\n' + '-'*10 + '\n'
+            str2_ = 'TAG:' + sec_tag + '\n' + '-'*10 + '\n'
+            str3_ = 'CVE:' + alias + '\n' + '-'*10 + '\n'
+            str4_ = coment + '\n' + '-'*10 + '\n'
+            
+            fullStr = fullStr + str0_ + str1_ + str2_ + str3_ + str4_ + '\n' + '='*50
+
+        # if bugID in prop_dict1:
+        #    alias = prop_dict1[bugID][0]
+        # elif bugID in prop_dict2:
+        #    alias = prop_dict2[bugID][0]
+        # else:
+        #    alias = 'NOT_MENTIONED' 
+        # if alias==None: 
+        #    alias = 'NOT_MENTIONED' 
+        
+
+        if (index % 5000 == 0):
+           print 'Processed:', index
+        index += 1 
+    print fullStr
+    dumpContentIntoFile(fullStr , '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/ALL_SEC_BUG_REPORT_COMMENTS.txt')
+
         
 
 if __name__=='__main__':
@@ -61,7 +122,18 @@ if __name__=='__main__':
    #secu_bug_IDs = getSecurityBugIDs()   
    #pickle.dump( secu_bug_IDs, open(pkl_fil, 'wb')) 
 
-   bugID_list = pickle.load(open(pkl_fil, 'rb') )
-   cmts = getComments(bugID_list)
+   #bugID_list = pickle.load(open(pkl_fil, 'rb') )
+   #cmts = getComments(bugID_list)
 
-   pickle.dump(cmts, open(cmt_pkl_, 'wb'))
+   #pickle.dump(cmts, open(cmt_pkl_, 'wb'))
+
+   sec_bug_prop_pkl1 = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/TMP_SEC_BUG_PROP_1.PKL'
+   sec_bug_prop_dat1 = pickle.load(open(sec_bug_prop_pkl1, 'rb'))
+
+   sec_bug_prop_pkl2 = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/TMP_SEC_BUG_PROP_2.PKL'
+   sec_bug_prop_dat2 = pickle.load(open(sec_bug_prop_pkl2, 'rb'))    
+
+   sec_bug_comm_pkl = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/SECU_COMMENTS.PKL'
+   sec_bug_comm_dat = pickle.load(open(sec_bug_comm_pkl, 'rb'))   
+
+   dumpComment(sec_bug_prop_dat1, sec_bug_prop_dat2, sec_bug_comm_dat)
