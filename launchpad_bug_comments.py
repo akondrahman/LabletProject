@@ -26,12 +26,14 @@ def getCommentForBug(bugID):
     bug_comments = the_bug.messages
     bug_cve      = the_bug.title  
     if len(bug_comments) > 0 : 
-        print 'Found {} comments for bug#{}'.format(len(bug_comments), bugID)
+        print 'Analyzing {} comments for bug#{}'.format(len(bug_comments), bugID)
         for comment_obj in bug_comments:
                 str1_ = 'BUG_ID:' + str(bugID) + '\n' + '-'*10 + '\n'
                 str2_ = 'CVE:' + bug_cve + '\n' + '-'*10 + '\n'
                 comment_content = comment_obj.content 
                 comment_subject = comment_obj.subject 
+                if  type(comment_subject) == None:
+                    comment_subject = 'NONE' 
                 comment_owner   = comment_obj.owner 
                 str3_ = 'SUBJECT:' + comment_subject + '\n' + '-'*10 + '\n'                    
                 str4_ = 'COMMENT_INDEX:' + str(comment_index) + '\n' + comment_content + '\n' + '-'*10 + '\n'
@@ -64,21 +66,26 @@ def getBugComments(file_name, out_file, out_csv_file, pkl_out_file):
         bug_pro_ind += 1 
         pkl_dict[bugID] = (bug_str, csv_str) 
     
-    if ((bug_pro_ind%500)==0):
+    if ((bug_pro_ind%1000)==0):
         dumpContentIntoFile(full_str, 'UBUNTU_TMP_BUG_REPORT.txt')
         dumpContentIntoFile(complete_csv_str, 'UBUNTU_TMP_BUG_REPORT_MAPPING.csv')      
         time.sleep( 60 )       
     
     dumpContentIntoFile(full_str, out_file) 
     dumpContentIntoFile(complete_csv_str, out_csv_file)  
-    pickle.dump(pkl_dict, open('TMP_CMT.PKL', 'wb'))   
+    pickle.dump(pkl_dict, open(pkl_out_file, 'wb'))   
 
 
 
 if __name__=='__main__':
-    bugID_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/dataset-bugreport-synthesis/ost-with-cves-only/OST_BUG_IDS_RES.txt' 
-    output_comment_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/OSTK_CVE_BUG_REPORT_COMMENTS.txt'
-    output_csv_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/OSTK_CVE_BUG_REPORT_COMMENT_MAP.csv'
-    output_pkl_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/OSTK_CVE_BUG_REPORT_COMMENT_ALL.PKL'
+    # bugID_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/dataset-bugreport-synthesis/ost-with-cves-only/OST_BUG_IDS_RES.txt' 
+    # output_comment_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/OSTK_CVE_BUG_REPORT_COMMENTS.txt'
+    # output_csv_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/OSTK_CVE_BUG_REPORT_COMMENT_MAP.csv'
+    # output_pkl_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/OSTK_CVE_BUG_REPORT_COMMENT_ALL.PKL'
+
+    bugID_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/dataset-bugreport-synthesis/ubuntu-with-cves-only/UBU_BUG_IDS_RES.txt' 
+    output_comment_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/UBUNTU_CVE_BUG_REPORT_COMMENTS.txt'
+    output_csv_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/UBUNTU_CVE_BUG_REPORT_COMMENT_MAP.csv'
+    output_pkl_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/UBUNTU_CVE_BUG_REPORT_COMMENT_ALL.PKL'
 
     getBugComments(bugID_file, output_comment_file, output_csv_file, output_pkl_file)  
