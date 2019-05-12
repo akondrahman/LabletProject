@@ -3,7 +3,10 @@ This program takes a list oif bug IDs as input
 and gets comments from lanucpad bugs 
 Akond Rahman 
 May 11, 2019 
+reff: https://help.launchpad.net/API/launchpadlib 
+reff: https://launchpad.net/+apidoc/1.0.html#bug
 '''
+
 from launchpadlib.launchpad import Launchpad 
 launchpad = Launchpad.login_anonymously('just testing', 'production') 
 import numpy as np 
@@ -26,21 +29,21 @@ def getCommentForBug(bugID):
     bug_comments = the_bug.messages
     bug_cve      = the_bug.title  
     if len(bug_comments) > 0 : 
-        print 'Analyzing {} comments for bug#{}'.format(len(bug_comments), bugID)
+        # print 'Analyzing {} comments for bug#{}'.format(len(bug_comments), bugID)
+        print bugID 
         for comment_obj in bug_comments:
                 str1_ = 'BUG_ID:' + str(bugID) + '\n' + '-'*10 + '\n'
                 str2_ = 'CVE:' + bug_cve + '\n' + '-'*10 + '\n'
                 comment_content = comment_obj.content 
-                comment_subject = comment_obj.subject 
-                if  type(comment_subject) == None:
-                    comment_subject = 'NONE' 
-                comment_owner   = comment_obj.owner 
-                str3_ = 'SUBJECT:' + comment_subject + '\n' + '-'*10 + '\n'                    
-                str4_ = 'COMMENT_INDEX:' + str(comment_index) + '\n' + comment_content + '\n' + '-'*10 + '\n'
-            
-                bugStr = bugStr  + str1_ + str2_ + str3_ + str4_ + '\n' + '='*50
-                csvStr = csvStr + str(bugID) + ',' + bug_cve +  ',' + str(comment_index) + ',' + str(comment_owner ) + '\n'
-                comment_index += 1 
+                if comment_obj.subject is not None:
+                    comment_subject = comment_obj.subject 
+                    comment_owner   = comment_obj.owner 
+                    str3_ = 'SUBJECT:' + comment_subject + '\n' + '-'*10 + '\n'                    
+                    str4_ = 'COMMENT_INDEX:' + str(comment_index) + '\n' + comment_content + '\n' + '-'*10 + '\n'
+                
+                    bugStr = bugStr  + str1_ + str2_ + str3_ + str4_ + '\n' + '='*50
+                    csvStr = csvStr + str(bugID) + ',' + bug_cve +  ',' + str(comment_index) + ',' + str(comment_owner ) + '\n'
+                    comment_index += 1 
                 
     else: 
         print 'No comments found  for bug#', bugID 
@@ -66,10 +69,10 @@ def getBugComments(file_name, out_file, out_csv_file, pkl_out_file):
         bug_pro_ind += 1 
         pkl_dict[bugID] = (bug_str, csv_str) 
     
-    if ((bug_pro_ind%1000)==0):
-        dumpContentIntoFile(full_str, 'UBUNTU_TMP_BUG_REPORT.txt')
-        dumpContentIntoFile(complete_csv_str, 'UBUNTU_TMP_BUG_REPORT_MAPPING.csv')      
-        time.sleep( 60 )       
+        if ((bug_pro_ind%25)==0):
+            dumpContentIntoFile(full_str, 'UBUNTU_TMP_BUG_REPORT.txt')
+            dumpContentIntoFile(complete_csv_str, 'UBUNTU_TMP_BUG_REPORT_MAPPING.csv')      
+            pickle.dump(pkl_dict, open('UBUNTU_TMP_BUG_CVE_MAP.PKL', 'wb'))   
     
     dumpContentIntoFile(full_str, out_file) 
     dumpContentIntoFile(complete_csv_str, out_csv_file)  
