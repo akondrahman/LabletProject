@@ -69,10 +69,10 @@ def getBugComments(file_name, out_file, out_csv_file, pkl_out_file):
         bug_pro_ind += 1 
         pkl_dict[bugID] = (bug_str, csv_str) 
     
-        if ((bug_pro_ind%25)==0):
-            dumpContentIntoFile(full_str, 'UBUNTU_TMP_BUG_REPORT.txt')
-            dumpContentIntoFile(complete_csv_str, 'UBUNTU_TMP_BUG_REPORT_MAPPING.csv')      
-            pickle.dump(pkl_dict, open('UBUNTU_TMP_BUG_CVE_MAP.PKL', 'wb'))   
+        if ((bug_pro_ind%100)==0):
+            dumpContentIntoFile(full_str, str(bug_pro_ind) + '_UBUNTU_TMP_BUG_REPORT.txt')
+            dumpContentIntoFile(complete_csv_str, str(bug_pro_ind) + '_UBUNTU_TMP_BUG_REPORT_MAPPING.csv')      
+            pickle.dump(pkl_dict, open(str(bug_pro_ind) + '_UBUNTU_TMP_BUG_CVE_MAP.PKL', 'wb'))   
     
     dumpContentIntoFile(full_str, out_file) 
     dumpContentIntoFile(complete_csv_str, out_csv_file)  
