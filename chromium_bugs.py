@@ -56,6 +56,7 @@ def getJSONData(file_list):
                                                     # print comment_.keys()
                                                     commentContent, commentDate, commentID, commentAuthor = comment_['content'] , comment_['published'], comment_['id'], comment_['author']['htmlLink']
                                                     bugReportTitle, bugReportSummary, bugReportDate, bugReportID, bugReportAuthor = dict_['title'] , dict_['summary'] , dict_['published'], dict_['id'], dict_['author']['htmlLink']
+                                                    commentContent = commentContent.encode("utf-8")
                                                     print 'Comment text:', commentContent
                                                     print 'Comment date:', commentDate
                                                     print 'Bug report title:', bugReportTitle
