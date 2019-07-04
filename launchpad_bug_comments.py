@@ -83,8 +83,9 @@ def getBugComments(file_name, out_file, out_csv_file, pkl_out_file):
  
     all_df = pd.DataFrame(all_details)
     dumpContentIntoFile(complete_csv_str, out_csv_file)  
-    all_df.to_csv('FULL_OSTK_BUG_REPORT_COMMENT.csv', index = False)
     pickle.dump(all_df, open(pkl_out_file, 'wb'))   
+    all_df.to_csv('FULL_OSTK_BUG_REPORT_COMMENT.csv', index = False)
+
 
 
 
