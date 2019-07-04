@@ -21,9 +21,14 @@ def findAllJSONFiles(dir_name):
 def getJSONData(file_list):
     for file_ in file_list:
         if os.path.exists(file_):
-            d_ = json.load(file_)
-            print dir(d_) 
-            print '*'*10            
+            with open(file_, 'rU') as json_file: 
+                dict_list = json.load(json_file)
+                # print dict_list
+                for dict_ in dict_list:
+                    if 'labels' in dict_:
+                        if 'cve' in dict_['labels'].lower():
+                            print dict_
+                            print '*'*10            
 
 
 if __name__=='__main__':
