@@ -10,6 +10,8 @@ import json
 from ijson import items
 import shutil
 import cPickle as pickle 
+import time
+import datetime
 
 def findAllJSONFiles(dir_name):
     all_json_files = []
@@ -61,11 +63,19 @@ def getJSONData(file_list):
 
                                     cve_cnt += 1
     print '='*50 
-    print cve_cnt
+    print 'Bug reports with CVEs:', cve_cnt
     return full_data_list
 
+def giveTimeStamp():
+  tsObj = time.time()
+  strToret = datetime.datetime.fromtimestamp(tsObj).strftime('%Y-%m-%d %H:%M:%S')
+  return strToret
 
 if __name__=='__main__':
+    t1 = time.time()
+    print 'Started at:', giveTimeStamp()
+    print '*'*100
+
     bug_repor_dir     = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/chrome-bug-reports/bugs'
     dataset_csv_name  = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/FULL_CHROME_CSV.csv'
     pickle_csv_name   = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/FULL_CHROME_PKL.pkl'
@@ -73,6 +83,14 @@ if __name__=='__main__':
     all_json_files = findAllJSONFiles(bug_repor_dir)
     # print all_json_files
     full_list = getJSONData(all_json_files)
-    full_df   = pd.DatFrame(full_list, header=['BUG_ID', 'BUG_DATE', 'BUG_TITLE', 'BUG_SUMMARY', 'BUG_CVE', 'BUG_AUTHOR', 'COMMENT_ID', 'COMMENT_TEXT', 'COMMENT_DATE', 'COMMENT_AUTHOR'])
+    full_df   = pd.DataFrame(full_list, header=['BUG_ID', 'BUG_DATE', 'BUG_TITLE', 'BUG_SUMMARY', 'BUG_CVE', 'BUG_AUTHOR', 'COMMENT_ID', 'COMMENT_TEXT', 'COMMENT_DATE', 'COMMENT_AUTHOR'])
     full_df.to_csv(dataset_csv_name,  index=False)
     pickle.dump(full_df, open(pickle_csv_name, 'wb'))       
+
+    print '*'*100
+    print 'Ended at:', giveTimeStamp()
+    print '*'*100
+    t2 = time.time()
+    time_diff = round( (t2 - t1 ) / 60, 5) 
+    print "Duration: {} minutes".format(time_diff)
+    print '*'*100  
