@@ -14,6 +14,8 @@ import os
 import time 
 import cPickle as pickle 
 import pandas as pd 
+import time 
+import  datetime 
 
 def dumpContentIntoFile(strP, fileP):
   strP = strP.encode('utf-8')
@@ -31,6 +33,7 @@ def getCommentForBug(bugID):
     bug_comments = the_bug.messages
     bug_cve      = the_bug.title  
     bug_date     = the_bug.date_created
+    bug_date_str = bug_date.strftime('%Y-%m-%dT%H-%M-%S') ## date with time 
     if len(bug_comments) > 0 : 
         print 'Analyzing {} comments for bug#{}'.format(len(bug_comments), bugID)
         # print bugID 
@@ -42,12 +45,14 @@ def getCommentForBug(bugID):
                     comment_subject = comment_obj.subject 
                     comment_owner   = comment_obj.owner 
                     comment_date    = comment_obj.date_created
+                    com_date_str    = comment_date.strftime('%Y-%m-%dT%H-%M-%S') ## date with time 
                     str3_ = 'SUBJECT:' + comment_subject + '\n' + '-'*10 + '\n'                    
                     str4_ = 'COMMENT_INDEX:' + str(comment_index) + '\n' + comment_content + '\n' + '-'*10 + '\n'
                 
                     bugStr = bugStr  + str1_ + str2_ + str3_ + str4_ + '\n' + '='*50
-                    bugTupleList.append( (bugID, bug_cve, comment_index, comment_subject, comment_owner, bug_date, comment_date) )
-                    csvStr = csvStr + str(bugID) + ',' + bug_cve +  ',' + str(comment_index) + ',' + comment_subject + ',' + str(comment_owner ) + ',' + bug_date + ',' + comment_date   + '\n'
+                    comment_subject = comment_subject.encode("utf-8")
+                    bugTupleList.append( (bugID, bug_cve, comment_index, comment_subject, comment_owner, bug_date_str, com_date_str) )
+                    csvStr = csvStr + str(bugID) + ',' + bug_cve +  ',' + str(comment_index) + ',' + comment_subject + ',' + str(comment_owner ) + ',' + bug_date_str + ',' + com_date_str   + '\n'
                     comment_index += 1 
                 
     else: 
