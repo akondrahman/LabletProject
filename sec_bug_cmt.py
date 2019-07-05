@@ -9,48 +9,54 @@ import json
 import cPickle as pickle 
 import numpy as np 
 import os 
-api_token = 'mWYEjiA4nOsii23LqFSuhotZyXJic5hRmMc5bFdm'
+api_token = ''
 
-def getSecurityBugIDs():
-    lis = []
-    kws2look = ['sec-moderate', 'sec-critical', 'sec-high', 'sec-low']
-    for kw_ in kws2look:
-       url2look = 'https://bugzilla.mozilla.org/rest/bug?keywords=' + kw_ 
-       bug_ID_data = requests.get( url2look , params={'api_key': api_token } )
-       bug_dict    = bug_ID_data.json()
-       bug_list    = bug_dict['bugs']
-       for bug_json in bug_list:
-           bugID = bug_json['id']
-           lis.append((bugID, kw_))
-       print 'Bugs gathered so far:{}, processed:{}'.format(len(lis), kw_)
+def getSecurityBugIDs(specialFlag=False): 
+    lis, lines_txt = [], []
+    if  specialFlag:
+        with open('/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/ALL_NEEDED_MOZI_FILES/2019_MOZILLA_CVE_BUG_IDs.txt') as f_:
+            lines_txt = f_.read().splitlines()
+        lis = [(int(x_), 'has-cve') for x_ in lines_txt if x_ != '\n' and len(x_) > 0 ] 
+    else:
+        kws2look = ['sec-moderate', 'sec-critical', 'sec-high', 'sec-low']
+        for kw_ in kws2look:
+            url2look = 'https://bugzilla.mozilla.org/rest/bug?keywords=' + kw_ 
+            bug_ID_data = requests.get( url2look , params={'api_key': api_token } )
+            bug_dict    = bug_ID_data.json()
+            bug_list    = bug_dict['bugs']
+            for bug_json in bug_list:
+                bugID = bug_json['id']
+                lis.append((bugID, kw_))
+            print 'Bugs gathered so far:{}, processed:{}'.format(len(lis), kw_)
     return lis 
    
 
 def getComments(lis_par):
-    list_ = []
+    list_, existing_id = [], []
 
-    existing_ls1 = pickle.load(open('TMP_CMT_1.PKL', 'rb'))
-    existing_ls2 = pickle.load(open('TMP_CMT_2.PKL', 'rb'))
-    existing_ls3 = pickle.load(open('TMP_CMT_3.PKL', 'rb'))
-    #existing_ls4 = pickle.load(open('TMP_CMT_4.PKL', 'rb'))
-    existing_ls  = existing_ls1 + existing_ls2 + existing_ls3    
-    existing_id  = [x_[0] for x_ in existing_ls]
-    print 'So far analyzed:', len(np.unique(existing_id))
+    # existing_ls1 = pickle.load(open('TMP_CMT_1.PKL', 'rb'))
+    # existing_ls2 = pickle.load(open('TMP_CMT_2.PKL', 'rb'))
+    # existing_ls3 = pickle.load(open('TMP_CMT_3.PKL', 'rb'))
+    # existing_ls4 = pickle.load(open('TMP_CMT_4.PKL', 'rb'))
+    # existing_ls  = existing_ls1 + existing_ls2 + existing_ls3    
+    # existing_id  = [x_[0] for x_ in existing_ls]
+    # print 'So far analyzed:', len(np.unique(existing_id))
     for tup in lis_par:
         id_, sev = tup 
         if id not in existing_id:
             cmt_url     = 'https://bugzilla.mozilla.org/rest/bug/' + str(id_)  + '/comment' 
             cmt_url_dat = requests.get( cmt_url , params={'api_key': api_token } )
-            cmt_dic     = cmt_url_dat.json()        
-            cmt_lis     = cmt_dic['bugs'][str(id_)]['comments']
+            cmt_dic     = cmt_url_dat.json() 
+            if 'bugs' in cmt_dic:       
+                cmt_lis     = cmt_dic['bugs'][str(id_)]['comments']
 
-            for cmt in cmt_lis:
-                if 'text' in cmt:
-                   cmt_txt = cmt['text']
-                   list_.append((id_, sev, cmt_txt))
-            pickle.dump(list_, open('TMP_CMT.PKL', 'wb'))
-            print id_ , len(cmt_lis)
-            print '='*50         
+                for cmt in cmt_lis:
+                    if 'text' in cmt:
+                        cmt_txt = cmt['text']
+                        list_.append((id_, sev, cmt_txt))
+                        pickle.dump(list_, open('TMP_CMT.PKL', 'wb'))
+                        print id_ , len(cmt_lis)
+                        print '='*50         
     return list_ 
 
 def dumpContentIntoFile(strP, fileP):
@@ -110,30 +116,30 @@ def dumpComment(prop_dict1, prop_dict2, comment_lis):
         if (index % 5000 == 0):
            print 'Processed:', index
         index += 1 
-    print fullStr
+    # print fullStr
     dumpContentIntoFile(fullStr , '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/ALL_SEC_BUG_REPORT_COMMENTS.txt')
 
         
 
 if __name__=='__main__':
-   pkl_fil = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/SECU_BUG_IDS.PKL'
-   cmt_pkl_ = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/SECU_COMMENTS.PKL'
+   pkl_fil = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/MOZI_2019_SECU_BUG_IDS.PKL'
+   cmt_pkl_ = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/MOZI_2019_SECU_COMMENTS.PKL'
 
-   #secu_bug_IDs = getSecurityBugIDs()   
-   #pickle.dump( secu_bug_IDs, open(pkl_fil, 'wb')) 
+   secu_bug_IDs = getSecurityBugIDs(True)    
+   pickle.dump( secu_bug_IDs, open(pkl_fil, 'wb')) 
 
-   #bugID_list = pickle.load(open(pkl_fil, 'rb') )
-   #cmts = getComments(bugID_list)
+   bugID_list = pickle.load(open(pkl_fil, 'rb') )
+   cmts = getComments(bugID_list)
 
-   #pickle.dump(cmts, open(cmt_pkl_, 'wb'))
+   pickle.dump(cmts, open(cmt_pkl_, 'wb'))
 
-   sec_bug_prop_pkl1 = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/TMP_SEC_BUG_PROP_1.PKL'
-   sec_bug_prop_dat1 = pickle.load(open(sec_bug_prop_pkl1, 'rb'))
+#    sec_bug_prop_pkl1 = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/TMP_SEC_BUG_PROP_1.PKL'
+#    sec_bug_prop_dat1 = pickle.load(open(sec_bug_prop_pkl1, 'rb'))
 
-   sec_bug_prop_pkl2 = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/TMP_SEC_BUG_PROP_2.PKL'
-   sec_bug_prop_dat2 = pickle.load(open(sec_bug_prop_pkl2, 'rb'))    
+#    sec_bug_prop_pkl2 = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/TMP_SEC_BUG_PROP_2.PKL'
+#    sec_bug_prop_dat2 = pickle.load(open(sec_bug_prop_pkl2, 'rb'))    
 
-   sec_bug_comm_pkl = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/SECU_COMMENTS.PKL'
-   sec_bug_comm_dat = pickle.load(open(sec_bug_comm_pkl, 'rb'))   
+#    sec_bug_comm_pkl = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/SECU_COMMENTS.PKL'
+#    sec_bug_comm_dat = pickle.load(open(sec_bug_comm_pkl, 'rb'))   
 
-   dumpComment(sec_bug_prop_dat1, sec_bug_prop_dat2, sec_bug_comm_dat)
+#    dumpComment(sec_bug_prop_dat1, sec_bug_prop_dat2, sec_bug_comm_dat)

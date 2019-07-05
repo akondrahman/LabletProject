@@ -61,7 +61,8 @@ def getBugData(df_param):
 def getSecBugData(lis_par):
     print 'Need to process:', len(lis_par)
     all_bug_data = {}
-    already = pickle.load(open('TMP_SEC_CMT_1.PKL', 'rb'))
+    already = []
+    # already = pickle.load(open('TMP_SEC_CMT_1.PKL', 'rb'))
     print 'Already processed:', len(already)
     for bugIDTuple  in lis_par:
         bugID, bugSeverity = bugIDTuple
@@ -87,7 +88,18 @@ def dumpContentIntoFile(strP, fileP):
   fileToWrite.close()
   return str(os.stat(fileP).st_size)
 
+def filterText(msg_commit):
+    msg_commit = msg_commit.replace('\n', ' ')
+    msg_commit = msg_commit.replace(',',  ';')    
+    msg_commit = msg_commit.replace('\t', ' ')
+    msg_commit = msg_commit.replace('&',  ';')  
+    msg_commit = msg_commit.replace('#',  ' ')
+    msg_commit = msg_commit.replace('=',  ' ')      
+
+    return msg_commit
+
 def createMozillaCSV(prop_file, bugID_file, cmt_file, out_file_csv):
+    full_data_list = []
     props_dict = pickle.load(open(prop_file, 'rb'))
     bugID_list = pickle.load(open(bugID_file, 'rb'))
     comm_list  = pickle.load(open(cmt_file, 'rb'))
@@ -111,8 +123,10 @@ def createMozillaCSV(prop_file, bugID_file, cmt_file, out_file_csv):
                 bug_title     = bug_props[10]
 
                 full_str = full_str + str(bugID) + ',' + bugTag + ',' + commentTxt + ',' + bug_alias + ',' + bug_component + ',' + bug_date + ',' + bug_title + '\n'
+                full_data_list.append( (bugID, bugTag, commentTxt, bug_alias, bug_component, bug_date, bug_title) )
             
     bytes_ = dumpContentIntoFile(full_str, out_file_csv) 
+    pickle.dump(full_data_list, open(out_file_csv+ '.PKL', 'wb')) 
     print 'Dumped a file of {} bytes'.format(bytes_) 
 
 if __name__=='__main__':
@@ -122,16 +136,21 @@ if __name__=='__main__':
     #    pickle.dump( all_bug_dict, open('/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/2018/2018.NEEDED.BUG.DETAILS.PKL', 'wb')) 
     #    print all_bug_dict  
 
-    #  sec_bug_pkl = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/SECU_BUG_IDS.PKL'
-    #  lis = pickle.load(open(sec_bug_pkl, 'rb')) 
-    #  sec_bug_dic = getSecBugData(lis)
-    #  pickle.dump( sec_bug_dic, open('/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/SEC_BUG_PROP.PKL', 'wb'))  
+    # sec_bug_pkl = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/MOZI_2019_SECU_BUG_IDS.PKL'
+    # lis = pickle.load(open(sec_bug_pkl, 'rb')) 
+    # sec_bug_dic = getSecBugData(lis)
+    # pickle.dump( sec_bug_dic, open('/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/MOZI_2019_SEC_BUG_PROP.PKL', 'wb'))  
     #   
     # 
 
-    # moz_prop_file     = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/ALL_NEEDED_MOZI_FILES/MOZILLA_SEC_BUG_PROP.PKL'
-    # moz_bug_id_file   = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/ALL_NEEDED_MOZI_FILES/MOZILLA_SECU_BUG_IDS.PKL'
-    # moz_bug_cmt_file  = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/ALL_NEEDED_MOZI_FILES/MOZILLA_SECU_COMMENTS.PKL'
-    # out_file          = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/ALL_NEEDED_MOZI_FILES/FULL_MOZI_CSV.csv'
+    # moz_prop_file     = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/ALL_NEEDED_MOZI_FILES/MOZI_2019_SEC_BUG_PROP.PKL'
+    # moz_bug_id_file   = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/ALL_NEEDED_MOZI_FILES/MOZI_2019_SECU_BUG_IDS.PKL'
+    # moz_bug_cmt_file  = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/ALL_NEEDED_MOZI_FILES/MOZI_2019_SECU_COMMENTS.PKL'
+    # out_file          = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/ALL_NEEDED_MOZI_FILES/MOZI_ONLY2019_CSV.csv'
 
-    # createMozillaCSV(moz_prop_file, moz_bug_id_file, moz_bug_cmt_file, out_file) 
+    moz_prop_file     = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/ALL_NEEDED_MOZI_FILES/UPTO_2018_MOZILLA_SEC_BUG_PROP.PKL'
+    moz_bug_id_file   = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/ALL_NEEDED_MOZI_FILES/UPTO_2018_MOZILLA_SECU_BUG_IDS.PKL'
+    moz_bug_cmt_file  = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/ALL_NEEDED_MOZI_FILES/UPTO_2018_MOZILLA_SECU_COMMENTS.PKL'
+    out_file          = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/ALL_NEEDED_MOZI_FILES/UPTO_2018_MOZILLA_FULL_CSV.csv'
+
+    createMozillaCSV(moz_prop_file, moz_bug_id_file, moz_bug_cmt_file, out_file) 
