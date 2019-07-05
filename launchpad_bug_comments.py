@@ -50,7 +50,6 @@ def getCommentForBug(bugID):
                     str4_ = 'COMMENT_INDEX:' + str(comment_index) + '\n' + comment_content + '\n' + '-'*10 + '\n'
                 
                     bugStr = bugStr  + str1_ + str2_ + str3_ + str4_ + '\n' + '='*50
-                    comment_subject = comment_subject.encode("utf-8")
                     bugTupleList.append( (bugID, bug_cve, comment_index, comment_subject, comment_owner, bug_date_str, com_date_str) )
                     csvStr = csvStr + str(bugID) + ',' + bug_cve +  ',' + str(comment_index) + ',' + comment_subject + ',' + str(comment_owner ) + ',' + bug_date_str + ',' + com_date_str   + '\n'
                     comment_index += 1 
@@ -82,12 +81,9 @@ def getBugComments(file_name, out_file, out_csv_file, pkl_out_file):
             all_details = all_details + bug_details 
  
     all_df = pd.DataFrame(all_details)
+
     dumpContentIntoFile(complete_csv_str, out_csv_file)  
-    pickle.dump(all_df, open(pkl_out_file, 'wb'))   
-    all_df.to_csv('FULL_OSTK_BUG_REPORT_COMMENT.csv', index = False)
-
-
-
+    
 
 if __name__=='__main__':
     bugID_file          = '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/dataset-bugreport-synthesis/ost-with-cves-only/OST_BUG_IDS_RES.txt' 
