@@ -1,6 +1,6 @@
 '''
 Akond Rahman 
-Bugzilla miner
+Mozilla miner
 Sep 14, 2018 
 '''
 import os 
@@ -31,6 +31,7 @@ def processDict(dict_p):
            severity       = bug_['severity']           
            status         = bug_['status'] 
            summary        = bug_['summary']  
+           creator        = bug_['creator']   
            if 'cve' in summary:
                print 'Summary:', summary 
            url            = ''
