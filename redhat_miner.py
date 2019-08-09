@@ -86,3 +86,9 @@ if __name__=='__main__':
 
     # pickle.dump( bug_info_dict, open('/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/ALL_REDHAT_BUG_DETAILS.PKL', 'wb')) 
     # print 'Dumped {} bugs'.format(len(bug_info_dict))   
+
+    # cve_bug_file  = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/LibreOffice-CVE-BUGIDs.csv'
+    # cve_bug_df    = pd.read_csv(cve_bug_file) 
+    # bug_info_dict = getBugData(cve_bug_df)
+    # pickle.dump( bug_info_dict, open('/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/ALL_LIBREOFFICE_BUG_DETAILS.PKL', 'wb')) 
+    # print 'Dumped {} bugs'.format(len(bug_info_dict))          

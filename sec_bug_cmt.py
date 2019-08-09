@@ -104,6 +104,28 @@ def getGen2BugComments(lis_par, alreadyList=[]):
             print '='*50         
     return list_ 
 
+def getLibreBugComments(lis_par, alreadyList=[]):
+    forbidden_list = [] 
+    list_ = []
+    for id_ in lis_par:
+        if (id_ not in alreadyList) and (id_ not in forbidden_list):
+            print 'Analyzing:', id_ 
+            # bug description: 
+            # bug comment:     
+            cmt_url     = 'https://bugs.documentfoundation.org/rest/bug/' + str(id_)  + '/comment' 
+            cmt_url_dat = requests.get( cmt_url , params={'api_key': api_token } )
+            cmt_dic     = cmt_url_dat.json() 
+            if 'bugs' in cmt_dic:       
+                cmt_lis     = cmt_dic['bugs'][str(id_)]['comments']
+                for cmt in cmt_lis:
+                    if 'text' in cmt:
+                        cmt_txt = cmt['text']
+                        list_.append((id_, cmt_txt))
+            pickle.dump(list_, open('/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/TEMP_LIBRE_BUGS_CMT.PKL', 'wb'))
+            print 'Comments processed:', len(cmt_lis)
+            print '='*50         
+    return list_ 
+
 def dumpContentIntoFile(strP, fileP):
   strP = strP.encode('utf-8')
   fileToWrite = open( fileP, 'w')
@@ -248,10 +270,10 @@ if __name__=='__main__':
     GENTOO
     '''
 
-    gen2_csv_file        = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Gentoo-CVE-BUGIDs.csv'
-    gen2_df              = pd.read_csv(gen2_csv_file) 
-    gen2_bug_ID_list     = np.unique( gen2_df['BugID'].tolist() )
-    print 'Total bugs with CVEs for Gentoo:', len(gen2_bug_ID_list) 
+    # gen2_csv_file        = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Gentoo-CVE-BUGIDs.csv'
+    # gen2_df              = pd.read_csv(gen2_csv_file) 
+    # gen2_bug_ID_list     = np.unique( gen2_df['BugID'].tolist() )
+    # print 'Total bugs with CVEs for Gentoo:', len(gen2_bug_ID_list) 
 
     # already_visited_list1  = pickle.load(open('/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/TEMP_REDHAT_BUGS_CMT_1.PKL', 'rb'))
     # already_visited_list2  = pickle.load(open('/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/TEMP_REDHAT_BUGS_CMT_2.PKL', 'rb'))
@@ -271,5 +293,15 @@ if __name__=='__main__':
     # already_visited_list   = list(np.unique(already_visited_list) ) 
     # print 'So far got comments for:', len(already_visited_list) 
 
-    bug_comments           = getGen2BugComments(gen2_bug_ID_list) 
-    pickle.dump(bug_comments, open('/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/GEN2_BUGS_CMT.PKL', 'wb'))    
+    # bug_comments           = getGen2BugComments(gen2_bug_ID_list) 
+    # pickle.dump(bug_comments, open('/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/GEN2_BUGS_CMT.PKL', 'wb'))    
+
+    '''
+    LibreOffice 
+    '''
+    # libre_csv_file        = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/LibreOffice-CVE-BUGIDs.csv'
+    # libre_df              = pd.read_csv(libre_csv_file) 
+    # libre_bug_ID_list     = np.unique( libre_df['BugID'].tolist() )
+    # print 'Total bugs with CVEs for LibreOffice:', len(libre_bug_ID_list)     
+    # bug_comments          = getLibreBugComments(libre_bug_ID_list) 
+    # pickle.dump(bug_comments, open('/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/LIBRE_BUGS_CMT.PKL', 'wb'))        
