@@ -186,7 +186,37 @@ def dumpComment(prop_dict1, prop_dict2, comment_lis):
     # print fullStr
     dumpContentIntoFile(fullStr , '/Users/akond/Documents/AkondOneDrive/OneDrive/SoSLablet/Fall-2018/datasets/ALL_SEC_BUG_REPORT_COMMENTS.txt')
 
-        
+def preprocessText(str_single_val):
+
+    str_single_val = str_single_val.lower() 
+    msg_commit = str_single_val.replace('\n', ' ' )
+    msg_commit = msg_commit.replace(',',  ' ')    
+    msg_commit = msg_commit.replace('\t', ' ')
+    msg_commit = msg_commit.replace('&',  ' ')  
+    msg_commit = msg_commit.replace('#',  ' ')
+    msg_commit = msg_commit.replace('=',  ' ')      
+
+    return msg_commit
+
+def dumpExtraCreditData(file_name, oracle_file):
+    ls_ = pickle.load(open(file_name, 'rb') )
+    df_ = pd.DataFrame(ls_, columns=['BUGID', 'PRIORITY', 'COMMENT', 'CVE', 'COMPONENT', 'TIME', 'BUGTITLE'])
+    # print df_.head()
+    df_['COMMENT']     = df_['COMMENT'].apply(preprocessText)
+    df_['CVE']         = df_['CVE'].apply(preprocessText)
+    df_['BUGTITLE']    = df_['BUGTITLE'].apply(preprocessText)
+    df_['COMPONENT']   = df_['COMPONENT'].apply(preprocessText)
+
+    print df_.head() 
+    df_.to_csv(oracle_file, encoding='utf-8', index = False, columns=['BUGID', 'PRIORITY', 'COMMENT', 'CVE', 'COMPONENT', 'TIME', 'BUGTITLE'])
+
+def dumpSanityData(file_name, sanity_file):
+    ls_ = pickle.load(open(file_name, 'rb') )
+    df_ = pd.DataFrame(ls_, columns=['BUGID', 'COMMENT'])
+    df_['COMMENT']     = df_['COMMENT'].apply(preprocessText)
+    df_.to_csv(sanity_file, encoding='utf-8', index = False, columns=['BUG', 'COMMENT'])
+    print df_.head() 
+
 
 if __name__=='__main__':
 #    '''
@@ -305,3 +335,21 @@ if __name__=='__main__':
     # print 'Total bugs with CVEs for LibreOffice:', len(libre_bug_ID_list)     
     # bug_comments          = getLibreBugComments(libre_bug_ID_list) 
     # pickle.dump(bug_comments, open('/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/LIBRE_BUGS_CMT.PKL', 'wb'))        
+
+    '''
+    Get comments for extra credit and sanity check 
+    '''
+    # comment_dataset = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/StrategyMining/LOCKED_DATASETS/UPTO_2018_MOZILLA_FULL_CSV.csv.PKL'
+    # oracle_dataset  = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/StrategyMining/LOCKED_DATASETS/ORACLE_MOZILLA.csv'
+
+    # comment_dataset = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/StrategyMining/LOCKED_DATASETS/LIBRE_BUGS_CMT.PKL'
+    # oracle_dataset  = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/StrategyMining/LOCKED_DATASETS/SANITY_LIBRE.csv'
+
+    # comment_dataset = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/StrategyMining/LOCKED_DATASETS/FINAL_GEN2_BUGS_CMT.PKL'
+    # oracle_dataset  = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/StrategyMining/LOCKED_DATASETS/SANITY_GEN2.csv'
+
+    # comment_dataset = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/StrategyMining/LOCKED_DATASETS/FINAL_REDHAT_BUGS_CMT.PKL'
+    # oracle_dataset  = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/StrategyMining/LOCKED_DATASETS/SANITY_REDHAT.csv'
+
+    # dumpSanityData(comment_dataset, oracle_dataset)
+    
