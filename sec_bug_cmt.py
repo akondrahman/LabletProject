@@ -217,6 +217,14 @@ def dumpSanityData(file_name, sanity_file):
     df_.to_csv(sanity_file, encoding='utf-8', index = False, columns=['BUG', 'COMMENT'])
     print df_.head() 
 
+def getBugCount(file_name):
+    print file_name
+    ls_ = pickle.load(open(file_name, 'rb') )
+    # df_ = pd.DataFrame(ls_, columns=['BUGID', 'PRIORITY', 'COMMENT', 'CVE', 'COMPONENT', 'TIME', 'BUGTITLE'])
+    df_ = pd.DataFrame(ls_, columns=['BUGID', 'COMMENT'])
+    print len(np.unique( df_['BUGID'] ) )
+    print '*'*25
+
 
 if __name__=='__main__':
 #    '''
@@ -352,4 +360,16 @@ if __name__=='__main__':
     # oracle_dataset  = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/StrategyMining/LOCKED_DATASETS/SANITY_REDHAT.csv'
 
     # dumpSanityData(comment_dataset, oracle_dataset)
+
+    '''
+    Get bug report count 
+    '''
+    # comment_dataset = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/StrategyMining/LOCKED_DATASETS/UPTO_2018_MOZILLA_FULL_CSV.csv.PKL'
+    # comment_dataset = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/StrategyMining/LOCKED_DATASETS/MOZI_ONLY2019__FULL.PKL'
+    # comment_dataset = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/StrategyMining/LOCKED_DATASETS/LIBRE_BUGS_CMT.PKL'
+    # comment_dataset = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/StrategyMining/LOCKED_DATASETS/FINAL_GEN2_BUGS_CMT.PKL'
+    # comment_dataset = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/StrategyMining/LOCKED_DATASETS/FINAL_REDHAT_BUGS_CMT.PKL'
+
+
+    getBugCount(comment_dataset)    
     

@@ -81,6 +81,14 @@ def giveTimeStamp():
   strToret = datetime.datetime.fromtimestamp(tsObj).strftime('%Y-%m-%d %H:%M:%S')
   return strToret
 
+
+def getBugCount(file_name):
+    print file_name
+    ls_ = pickle.load(open(file_name, 'rb') )
+    df_ = pd.DataFrame(ls_, columns=['BUG_ID', 'BUG_DATE', 'BUG_TITLE', 'BUG_SUMMARY', 'BUG_CVE', 'BUG_AUTHOR', 'COMMENT_ID', 'COMMENT_TEXT', 'COMMENT_DATE', 'COMMENT_AUTHOR', 'BUG_COMPO'])
+    print len(np.unique( df_['BUG_ID'] ) )
+    print '*'*25
+
 if __name__=='__main__':
     t1 = time.time()
     print 'Started at:', giveTimeStamp()
@@ -88,14 +96,16 @@ if __name__=='__main__':
 
     bug_repor_dir     = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/chrome-bug-reports/bugs'
     dataset_csv_name  = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/FULL_CHROME_CSV.csv'
-    pickle_csv_name   = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/FULL_CHROME_PKL.pkl'
+    pickle_csv_name   = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/StrategyMining/LOCKED_DATASETS/FULL_CHROME_PKL.pkl'
 
-    all_json_files = findAllJSONFiles(bug_repor_dir)
-    # print all_json_files
-    full_list = getJSONData(all_json_files)
-    full_df   = pd.DataFrame(full_list)
-    full_df.to_csv(dataset_csv_name, header=['BUG_ID', 'BUG_DATE', 'BUG_TITLE', 'BUG_SUMMARY', 'BUG_CVE', 'BUG_AUTHOR', 'COMMENT_ID', 'COMMENT_TEXT', 'COMMENT_DATE', 'COMMENT_AUTHOR', 'BUG_COMPO'], index=False)
-    pickle.dump(full_df, open(pickle_csv_name, 'wb'))       
+    # all_json_files = findAllJSONFiles(bug_repor_dir)
+    # # print all_json_files
+    # full_list = getJSONData(all_json_files)
+    # full_df   = pd.DataFrame(full_list)
+    # full_df.to_csv(dataset_csv_name, header=['BUG_ID', 'BUG_DATE', 'BUG_TITLE', 'BUG_SUMMARY', 'BUG_CVE', 'BUG_AUTHOR', 'COMMENT_ID', 'COMMENT_TEXT', 'COMMENT_DATE', 'COMMENT_AUTHOR', 'BUG_COMPO'], index=False)
+    # pickle.dump(full_df, open(pickle_csv_name, 'wb'))       
+
+    getBugCount(pickle_csv_name) 
 
     print '*'*100
     print 'Ended at:', giveTimeStamp()
