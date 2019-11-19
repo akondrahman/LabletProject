@@ -89,6 +89,45 @@ def getBugCount(file_name):
     print len(np.unique( df_['BUG_ID'] ) )
     print '*'*25
 
+def getCVE(bug_txt):
+    cve_val = 'NOT_FOUND'
+    splitted_txt = bug_txt.split(' ')
+    for txt_ in splitted_txt:
+        if (('cve' in bug_txt) and ('-' in bug_txt) ):
+            cve_val = txt_ 
+    return cve_val
+        
+
+def getExtraChromeBugs():
+    all_chrome_bugs = []
+    extra_bug_file_input = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/UNPROCESSED_CHROME_2016_2019/ALL_UNPROCESSED_2016_2019.csv'
+    csv_out_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/UNPROCESSED_CHROME_2016_2019/ALL_CHROME_PROCESSED_2016_2019.csv'
+    extra_bug_df = pd.read_csv(extra_bug_file_input) 
+
+    unique_bugs = np.unique(extra_bug_df['ID'].tolist())
+    for bugID in unique_bugs:
+        the_cve = 'NOT_FOUND'
+        bug_df = extra_bug_df[extra_bug_df['ID']==bugID]
+        bug_summary = bug_df['Summary'].tolist()[0].tolower() 	
+        bug_labels  = bug_df['AllLabels'].tolist()[0].tolower()
+        if 'cve' in bug_summary:
+            the_cve = getCVE(bug_summary)
+        elif 'cve' in bug_labels:
+            the_cve = getCVE(bug_labels)  	
+        bug_link = 'https://bugs.chromium.org/p/chromium/issues/detail?id=' + str(bugID)
+        bug_component = bug_df['Component'].tolist()[0].tolower() 	
+        bug_status = bug_df['Status'].tolist()[0].tolower() 	
+        bug_owber = bug_df['Owner'].tolist()[0].tolower() 	
+        bug_OS = bug_df['OS'].tolist()[0].tolower() 	
+        bug_date = bug_df['Modified'].tolist()[0].tolower() 	
+        
+        dat_ = (bugID, bug_summary, bug_component, bug_status, bug_OS, bug_date, bug_link)
+        all_chrome_bugs.append(dat_) 
+    full_df = pd.DataFrame(all_chrome_bugs) 
+    full_df.to_csv(csv_out_file, header=['BUG_ID', 'BUG_SUMMARY', 'BUG_COMPONENT', 'BUG_STATUS', 'BUG_OS', 'BUG_DATE', 'BUG_LINK' ], index=False, encoding='utf-8')    
+
+
+ 
 if __name__=='__main__':
     t1 = time.time()
     print 'Started at:', giveTimeStamp()
@@ -105,7 +144,9 @@ if __name__=='__main__':
     # full_df.to_csv(dataset_csv_name, header=['BUG_ID', 'BUG_DATE', 'BUG_TITLE', 'BUG_SUMMARY', 'BUG_CVE', 'BUG_AUTHOR', 'COMMENT_ID', 'COMMENT_TEXT', 'COMMENT_DATE', 'COMMENT_AUTHOR', 'BUG_COMPO'], index=False)
     # pickle.dump(full_df, open(pickle_csv_name, 'wb'))       
 
-    getBugCount(pickle_csv_name) 
+    # getBugCount(pickle_csv_name) 
+
+    getExtraChromeBugs()
 
     print '*'*100
     print 'Ended at:', giveTimeStamp()
