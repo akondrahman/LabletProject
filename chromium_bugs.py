@@ -57,20 +57,20 @@ def getJSONData(file_list):
                                                     commentContent, commentDate, commentID, commentAuthor = comment_['content'] , comment_['published'], comment_['id'], comment_['author']['htmlLink']
                                                     bugReportTitle, bugReportSummary, bugReportDate, bugReportID, bugReportAuthor = dict_['title'] , dict_['summary'] , dict_['published'], dict_['id'], dict_['author']['htmlLink']
                                                     commentContent = commentContent.encode("utf-8")
-                                                    print 'Comment text:', commentContent
-                                                    print 'Comment date:', commentDate
-                                                    print 'Bug report title:', bugReportTitle
-                                                    print 'Bug report summary:', bugReportSummary
-                                                    print 'Bug report date:', bugReportDate
-                                                    print 'Bug report label:', bug_label 
-                                                    print 'Bug report component:', bug_compo
-                                                    print 'Bug report ID:', bugReportID
-                                                    print '*'*10            
+                                                    # print 'Comment text:', commentContent
+                                                    # print 'Comment date:', commentDate
+                                                    # print 'Bug report title:', bugReportTitle
+                                                    # print 'Bug report summary:', bugReportSummary
+                                                    # print 'Bug report date:', bugReportDate
+                                                    # print 'Bug report label:', bug_label 
+                                                    # print 'Bug report component:', bug_compo
+                                                    # print 'Bug report ID:', bugReportID
+                                                    # print '*'*10            
                                                     full_data_list.append( (bugReportID, bugReportDate, bugReportTitle, bugReportSummary, bug_label, bugReportAuthor, commentID, commentContent, commentDate, commentAuthor, bug_compo)  )
 
                                     cve_cnt += 1
-    print '='*50 
-    print 'Total bug reports:', len(dict_list) 
+    # print '='*50 
+    # print 'Total bug reports:', len(dict_list) 
     # print 'Bug reports with CVEs:', cve_cnt
     # print 'Bug reports with CVEs and non-zero comment:', cve_comment_cnt
     # print 'Bug reports with CVEs and non-zero comment and non zero components:', cve_comment_compo_cnt
@@ -124,14 +124,15 @@ def getExtraChromeBugs():
         dat_ = (bugID, bug_summary, bug_component, bug_status, bug_OS, bug_date, bug_link)
         all_chrome_bugs.append(dat_) 
     full_df = pd.DataFrame(all_chrome_bugs) 
+    print(full_df.head() )
     full_df.to_csv(csv_out_file, header=['BUG_ID', 'BUG_SUMMARY', 'BUG_COMPONENT', 'BUG_STATUS', 'BUG_OS', 'BUG_DATE', 'BUG_LINK' ], index=False, encoding='utf-8')    
 
 
  
 if __name__=='__main__':
     t1 = time.time()
-    print 'Started at:', giveTimeStamp()
-    print '*'*100
+    print('Started at:', giveTimeStamp() )
+    print('*'*100 )
 
     bug_repor_dir     = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/chrome-bug-reports/bugs'
     dataset_csv_name  = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/FULL_CHROME_CSV.csv'
@@ -148,10 +149,10 @@ if __name__=='__main__':
 
     getExtraChromeBugs()
 
-    print '*'*100
-    print 'Ended at:', giveTimeStamp()
-    print '*'*100
+    print('*'*100)
+    print('Ended at:', giveTimeStamp() )
+    print('*'*100)
     t2 = time.time()
     time_diff = round( (t2 - t1 ) / 60, 5) 
-    print "Duration: {} minutes".format(time_diff)
-    print '*'*100  
+    print('Duration: {} minutes'.format(time_diff))
+    print('*'*100)  
