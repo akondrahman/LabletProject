@@ -46,7 +46,10 @@ def renameStrategy(name_):
              'SourceCodeExploration':'DIAGNOSTICS', 
              'Fuzzer':'PAYLOAD', 
              'Sourcecode':'DIAGNOSTICS', 
-             'SourceCodeWeakness':'DIAGNOSTICS'
+             'SourceCodeWeakness':'DIAGNOSTICS', 
+             'SourceCode':'DIAGNOSTICS', 
+             'InputManipulation':'PAYLOAD', 
+             'ConfigurationManipulation':'TUNING'
             }
     return dict_[name_] 
     
@@ -99,16 +102,17 @@ def getOpenstackBugTime(bugID):
 
 def getBugDetails(dic, ID): 
     cve, date_ = 'NOT_FOUND', 'NOT_FOUND' 
-    cve_option_1 = ''
+    cve_option_1, cve_option_2 = '', ''
     if ID in dic: 
-        if len(dic[ID][0]) > 0:
-           cve_option_1 = dic[ID][0][0].lower()
-        cve_option_2 = dic[ID][9].split(' ')[0].lower() 
-        if 'cve' in cve_option_1:
-            cve = cve_option_1
-        elif 'cve' in cve_option_2:
-            cve = cve_option_2
-        date_ = dic[ID][3]
+        if (len(dic[ID]) > 0):
+            if len(dic[ID][0]) > 0:
+               cve_option_1 = dic[ID][0][0].lower()
+            cve_option_2 = dic[ID][9].split(' ')[0].lower() 
+            if 'cve' in cve_option_1:
+               cve = cve_option_1
+            elif 'cve' in cve_option_2:
+               cve = cve_option_2
+            date_ = dic[ID][3]
     return cve, date_ 
 
 def finalizeRedHatDataFrame(df_param, pkl_ ): 
@@ -234,7 +238,7 @@ if __name__=='__main__':
 
     #### LIBREOFFICE
     DS_NAME  ='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-LIBREOFFICE-MAPPING-SEMIFINAL.csv'
-    PKL_FILE ='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/RAW/ALL_LIBREOFFICE_BUG_DETAILS.PKL.PKL'
+    PKL_FILE ='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/RAW/ALL_LIBREOFFICE_BUG_DETAILS.PKL'
     OUT_FILE = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-LIBREOFFICE-MAPPING-FINAL.csv'
     DS_FRAME = pd.read_csv(DS_NAME) 
     PKL_DAT  = pickle.load(open(PKL_FILE, 'rb'), encoding="latin1")
