@@ -35,7 +35,12 @@ def renameStrategy(name_):
              'Source code exploration':'DIAGNOSTICS', 
              'System Configuration ':'TUNING', 
              'System Configuration Flag':'TUNING' , 
-             'SystemConfiguration ':'TUNING' 
+             'SystemConfiguration ':'TUNING' , 
+             'SytemUsage':'EXECUTION', 
+             'HardwareUsage':'EXECUTION', 
+             'PaylaodInjection':'PAYLOAD' , 
+             'SourcecodeWeakness':'DIAGNOSTICS', 
+             'OutdatedDependency':'DIAGNOSTICS'
             }
     return dict_[name_] 
     
@@ -59,6 +64,7 @@ def finalizeDataFrame(df_param, old_flag = True ):
         
         new_strategy = df_param[df_param['BUGID']==bugID]['AKOND'].tolist()[0]
         date_time = df_param[df_param['BUGID']==bugID]['TIMESTAMP'].tolist()[0]
+        date_time_str = date_time.strftime('%Y-%m-%dT%H-%M-%S')
         
 
         # print(new_strategy )
@@ -74,7 +80,7 @@ def finalizeDataFrame(df_param, old_flag = True ):
                     final_strategy_ls.append(  renameStrategy(new_strategy)  )
         # print(bugID, cve, final_strategy_ls) 
         for tactic in final_strategy_ls:
-            complete_list.append((bugID, date_time, cve, tactic))
+            complete_list.append((bugID, date_time_str, cve, tactic))
     final_df = pd.DataFrame(complete_list)
     return final_df
 
@@ -134,10 +140,15 @@ if __name__=='__main__':
     # final_df =finalizeOpenstackDataFrame(DS_FRAME)
 
     #### CHROME 
-    DS_NAME='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-CHROME-MAPPING-SEMIFINAL.csv'
-    OUT_FILE = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-CHROME-MAPPING-FINAL.csv'
+    # DS_NAME='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-CHROME-MAPPING-SEMIFINAL.csv'
+    # OUT_FILE = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-CHROME-MAPPING-FINAL.csv'
+    # DS_FRAME = pd.read_csv(DS_NAME) 
+    # final_df =finalizeDataFrame(DS_FRAME)
+
+    #### ECLIPSE 
+    DS_NAME='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-ECLIPSE-MAPPING-SEMIFINAL.csv'
+    OUT_FILE = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-ECLIPSE-MAPPING-FINAL.csv'
     DS_FRAME = pd.read_csv(DS_NAME) 
     final_df =finalizeDataFrame(DS_FRAME)
-
 
     final_df.to_csv(OUT_FILE, header=['BUGID', 'TIMESTAMP', 'CVE', 'TACTIC' ], index=False, encoding='utf-8')
