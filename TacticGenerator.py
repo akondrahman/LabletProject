@@ -21,7 +21,21 @@ def renameStrategy(name_):
              'SystemConfigurationTuning':'TUNING' , 
              'UX':'EXECUTION' ,
              'Diagnostics':'DIAGNOSTICS', 
-             'CommandInput':'PAYLOAD' 
+             'CommandInput':'PAYLOAD' , 
+             'Outdated-Dependnecy':'DIAGNOSTICS', 
+             'PayloadManipulation':'PAYLOAD', 
+             'ScriptInjection':'PAYLOAD' , 
+             'SecurityScanningTool':'DIAGNOSTICS', 
+             'SystemConfiguration':'TUNING',
+             'SystemConfigurationFlag':'TUNING' , 
+             'SystemConfigurationInput':'TUNING' , 
+             'Command exploration':'PAYLOAD', 
+             'Outdated dependency':'DIAGNOSTICS', 
+             'Source code analysis':'DIAGNOSTICS', 
+             'Source code exploration':'DIAGNOSTICS', 
+             'System Configuration ':'TUNING', 
+             'System Configuration Flag':'TUNING' , 
+             'SystemConfiguration ':'TUNING' 
             }
     return dict_[name_] 
     
@@ -74,11 +88,11 @@ def finalizeOpenstackDataFrame(df_param ):
     BUGLINKS = df_param['Link'].tolist()
     complete_list = []
     for bug_ in BUGLINKS:
-        print(bug_)
+        # print(bug_)
         if isinstance(bug_, str): 
             bugID = bug_.split('/')[-1] 
             final_strategy_ls = []
-            print(bugID)
+            # print(bugID)
             cve = df_param[df_param['Link']==bug_]['CVE'].tolist()[0]
             
             new_strategy = df_param[df_param['Link']==bug_]['Strategy'].tolist()[0]
@@ -91,13 +105,16 @@ def finalizeOpenstackDataFrame(df_param ):
                         if ' ' not in name:
                             final_strategy_ls.append(  renameStrategy(name) )
                 else:
-                    if ' ' not in new_strategy:
                         final_strategy_ls.append(  renameStrategy(new_strategy)  )
-            # print(bugID, cve, final_strategy_ls) 
+
             # date_time = getOpenstackBugTime(bugID) 
-            date_time = '2019-12-31T12:00:00'
+            # date_time_str = date_time.strftime('%Y-%m-%dT%H-%M-%S')
+
+            date_time_str = '2019-12-31T12:00:00'
+
+            print(bugID, date_time_str , cve, final_strategy_ls) 
             for tactic in final_strategy_ls:
-                complete_list.append((bugID, date_time, cve, tactic))
+                complete_list.append((bugID, date_time_str, cve, tactic))
     final_df = pd.DataFrame(complete_list)
     return final_df
 
@@ -111,9 +128,16 @@ if __name__=='__main__':
 
 
     #### OPENSTACK 
-    DS_NAME='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-OPENSTACK-MAPPING-SEMIFINAL.csv'
-    OUT_FILE = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-OPENSTACK-MAPPING-FINAL.csv'
+    # DS_NAME='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-OPENSTACK-MAPPING-SEMIFINAL.csv'
+    # OUT_FILE = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-OPENSTACK-MAPPING-FINAL.csv'
+    # DS_FRAME = pd.read_csv(DS_NAME) 
+    # final_df =finalizeOpenstackDataFrame(DS_FRAME)
+
+    #### CHROME 
+    DS_NAME='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-CHROME-MAPPING-SEMIFINAL.csv'
+    OUT_FILE = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-CHROME-MAPPING-FINAL.csv'
     DS_FRAME = pd.read_csv(DS_NAME) 
-    final_df =finalizeOpenstackDataFrame(DS_FRAME)
+    final_df =finalizeDataFrame(DS_FRAME)
+
 
     final_df.to_csv(OUT_FILE, header=['BUGID', 'TIMESTAMP', 'CVE', 'TACTIC' ], index=False, encoding='utf-8')
