@@ -153,10 +153,16 @@ if __name__=='__main__':
     # DS_FRAME = pd.read_csv(DS_NAME) 
     # final_df =finalizeDataFrame(DS_FRAME)
 
-    #### HTTPD  
-    DS_NAME='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-HTTPD-MAPPING-SEMIFINAL.csv'
-    OUT_FILE = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-HTTPD-MAPPING-FINAL.csv'
-    DS_FRAME = pd.read_csv(DS_NAME) 
-    final_df =finalizeDataFrame(DS_FRAME)
+    # #### HTTPD  
+    # DS_NAME='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-HTTPD-MAPPING-SEMIFINAL.csv'
+    # OUT_FILE = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-HTTPD-MAPPING-FINAL.csv'
+    # DS_FRAME = pd.read_csv(DS_NAME) 
+    # final_df =finalizeDataFrame(DS_FRAME)
+
+    #### MOBY  
+    # DS_NAME='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-MOBY-MAPPING-SEMIFINAL.csv'
+    # OUT_FILE = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-MOBY-MAPPING-FINAL.csv'
+    # DS_FRAME = pd.read_csv(DS_NAME) 
+    # final_df =finalizeDataFrame(DS_FRAME)
 
     final_df.to_csv(OUT_FILE, header=['BUGID', 'TIMESTAMP', 'CVE', 'TACTIC' ], index=False, encoding='utf-8')
