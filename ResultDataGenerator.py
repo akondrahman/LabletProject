@@ -32,19 +32,22 @@ def getCWENames():
         readCSV = csv.reader(file_, delimiter=',')
         for row_ in readCSV:
             if row_[0] not in cwe_dict:
-                cwe_dict[row_[0]]= row_[1]
+                cweID = 'CWE-' + str(row_[0])
+                cwe_dict[cweID]= row_[1]
 
     with open(development_cwes_file) as file_:
         readCSV = csv.reader(file_, delimiter=',')
         for row_ in readCSV:
             if row_[0] not in cwe_dict:
-                cwe_dict[row_[0]]= row_[1]    
+                cweID = 'CWE-' + str(row_[0])
+                cwe_dict[cweID]= row_[1]
 
     with open(architectural_cwes_file) as file_:
         readCSV = csv.reader(file_, delimiter=',')
         for row_ in readCSV:
             if row_[0] not in cwe_dict:
-                cwe_dict[row_[0]]= row_[1]
+                cweID = 'CWE-' + str(row_[0])
+                cwe_dict[cweID]= row_[1]
 
     return cwe_dict
 
@@ -60,7 +63,10 @@ def printMappedCWEs(full_loaded_df):
         tactic_cwes = [x_ for x_ in tactic_cwes if x_!='NVD-CWE-Other' and x_!='NVD-CWE-noinfo' and x_ not in depreacted_list]
         tactic_cwe_dist = dict(Counter(tactic_cwes)) 
         for k_, v_ in tactic_cwe_dist.items():
-            print('TACTIC:{}, CWE:{}, COUNT:{}'.format( tactic, k_, v_ ) )
+            weakness_name = 'UNASSIGNED' 
+            if k_ in cwe_names_dict:
+                weakness_name = cwe_names_dict[k_] 
+            print('TACTIC:{}, WEAKNESS-ID:{}, WEAKNESS-NAME:{}, COUNT:{}'.format( tactic, k_, weakness_name ,  v_ ) )
             print('*'*25)
         print('='*50) 
 
