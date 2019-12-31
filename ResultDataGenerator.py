@@ -71,12 +71,26 @@ def printMappedCWEs(full_loaded_df):
         print('='*50) 
 
 def printTacticSeverityMapping(full_df): 
+    cve_tactic_dict = {}
     unique_cves = np.unique( full_df['ID'].tolist() )
     for cve_ in unique_cves:
         cve_df       = full_df[full_df['ID']==cve_]
         cve_severity = cve_df['SEVERITY'].tolist()[0] 
-        cve_tactic   = cve_df['TACTIC'].tolist() 
-        print(cve_df, cve_severity, cve_tactic) 
+        cve_tactics  = np.unique( cve_df['TACTIC'].tolist()  )
+        cve_tactic_string = ''
+        for tactic_ in cve_tactics:
+            cve_tactic_string = cve_tactic_string + tactic_ + '+'
+        print(cve_, cve_severity, cve_tactic_string) 
+        if cve_severity not in cve_tactic_dict:
+            cve_tactic_dict[cve_severity] = [cve_tactic_string]  
+        else:
+            cve_tactic_dict[cve_severity] = cve_tactic_dict[cve_severity] +  [cve_tactic_string]                  
+    for k_, v_ in cve_tactic_dict.items():
+        tactic_counter_dict = dict(Counter(v_))
+        for key_, val_ in tactic_counter_dict.items():
+            print('SEVERITY:{}, TACTC_COMBO:{}, TACTIC_COMBO_OCCURRENCE:{}'.format({k_}, {key_}, {val_}))
+            print('-'*50)
+        print('*'*100) 
 
 
 if __name__=='__main__':
