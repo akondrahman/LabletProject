@@ -70,21 +70,32 @@ def printMappedCWEs(full_loaded_df):
             print('*'*25)
         print('='*50) 
 
+def printTacticSeverityMapping(full_df): 
+    unique_cves = np.unique( full_df['ID'].tolist() )
+    for cve_ in unique_cves:
+        cve_df       = full_df[full_df['ID']==cve_]
+        cve_severity = cve_df['SEVERITY'].tolist()[0] 
+        cve_tactic   = cve_df['TACTIC'].tolist() 
+        print(cve_df, cve_severity, cve_tactic) 
+
 
 if __name__=='__main__':
+    #NVD FILE
     FULL_NVD_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/RAW/FINAL_NVD_CVE_DATA_FULL.csv'
     NVD_DF = pd.read_csv(FULL_NVD_FILE)
-
     #MOZILLA MAPPING FILE
     FULL_MOZILLA_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-MOZILLA-MAPPING-FINAL.csv'
     MOZI_DF = pd.read_csv(FULL_MOZILLA_FILE) 
     
+
     merged_dataframe = mergeDataFrame(NVD_DF, MOZI_DF)
     # print(merged_dataframe.tail()) 
 
-    ###RQ: What source code weaknesses are exploited with the identified tactics 
-    printMappedCWEs(merged_dataframe) 
+    # ###RQ: What source code weaknesses are exploited with the identified tactics ... will not be used in paper 
+    # printMappedCWEs(merged_dataframe) 
 
+    ###RQ: What is the mapping of vulnerability severity and identified tactics? 
+    printTacticSeverityMapping(merged_dataframe) 
     
 
 
