@@ -62,6 +62,15 @@ def splitOnCateg(df_, name_, categ_):
     elif 'ECLIPSE' in name_:
         bug_content_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/RAW/ECLIPSE-SUBCATEGORY-MAPPING.csv'
 
+        for _ in range(16):
+            payload_subcateg_list.append( 'SOURCECODE' ) 
+        for _ in range(1):
+            payload_subcateg_list.append( 'BINARY' ) 
+
+        for _ in range(14):
+            diagnos_subcateg_list.append( 'SOURCECODE' ) 
+        for _ in range(1):
+            diagnos_subcateg_list.append( 'BUILD' )
 
     categ_df = df_[df_['TACTIC']==categ_]
     for bugID in np.unique( categ_df['BUGID'].tolist() ):
