@@ -96,7 +96,16 @@ def splitOnCateg(df_, name_, categ_):
             diagnos_subcateg_list.append( 'BUILD' )
     elif 'PHP' in name_:
         bug_content_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/RAW/PHP-SUBCATEGORY-MAPPING.csv'
-    
+
+        for _ in range(56):
+            payload_subcateg_list.append( 'SOURCECODE' ) 
+        for _ in range(7):
+            payload_subcateg_list.append( 'BINARY' ) 
+
+        for _ in range(7):
+            diagnos_subcateg_list.append( 'SOURCECODE' ) 
+        for _ in range(3):
+            diagnos_subcateg_list.append( 'BUILD' )    
 
 
     categ_df = df_[df_['TACTIC']==categ_]
@@ -132,7 +141,7 @@ def splitOnCateg(df_, name_, categ_):
     else:
         # print(len(diagnos_subcateg_list))
         subcateg_list = subcateg_list + diagnos_subcateg_list 
-    if len(emptyDict) > 0 and ('MOZILLA' not in name_) and ('CHROME' not in name_) and ('ECLIPSE' not in name_) and ('MOBY' not in name_) and ('OPENSTACK' not in name_): ## mozilla, chrome, eclipse, moby, openstack has already been handled so nothing to show 
+    if len(emptyDict) > 0 and ('MOZILLA' not in name_) and ('CHROME' not in name_) and ('ECLIPSE' not in name_) and ('MOBY' not in name_) and ('OPENSTACK' not in name_) and ('PHP' not in name_): ## mozilla, chrome, eclipse, moby, openstack, php  has already been handled so nothing to show 
         print('!'*10)
         print(categ_)
         print(emptyDict)
