@@ -85,6 +85,20 @@ def splitOnCateg(df_, name_, categ_):
     elif 'OPENSTACK' in name_:
         bug_content_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/RAW/OPENSTACK-SUBCATEGORY-MAPPING.csv'
 
+        for _ in range(3):
+            payload_subcateg_list.append( 'SOURCECODE' ) 
+        for _ in range(1):
+            payload_subcateg_list.append( 'BINARY' ) 
+
+        for _ in range(15):
+            diagnos_subcateg_list.append( 'SOURCECODE' ) 
+        for _ in range(4):
+            diagnos_subcateg_list.append( 'BUILD' )
+    elif 'PHP' in name_:
+        bug_content_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/RAW/PHP-SUBCATEGORY-MAPPING.csv'
+    
+
+
     categ_df = df_[df_['TACTIC']==categ_]
     for bugID in np.unique( categ_df['BUGID'].tolist() ):
         SUBCATEG = ''
@@ -118,7 +132,7 @@ def splitOnCateg(df_, name_, categ_):
     else:
         # print(len(diagnos_subcateg_list))
         subcateg_list = subcateg_list + diagnos_subcateg_list 
-    if len(emptyDict) > 0 and ('MOZILLA' not in name_) and ('CHROME' not in name_) and ('ECLIPSE' not in name_) and ('MOBY' not in name_): ## mozilla, chrome, eclipse, moby has already been handled so nothing to show 
+    if len(emptyDict) > 0 and ('MOZILLA' not in name_) and ('CHROME' not in name_) and ('ECLIPSE' not in name_) and ('MOBY' not in name_) and ('OPENSTACK' not in name_): ## mozilla, chrome, eclipse, moby, openstack has already been handled so nothing to show 
         print('!'*10)
         print(categ_)
         print(emptyDict)
@@ -176,9 +190,9 @@ if __name__=='__main__':
     # # #MOZILLA 
     # DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-MOZILLA-MAPPING-FINAL.csv' 
     #OPENSTACK 
-    DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-OPENSTACK-MAPPING-FINAL.csv'    
+    # DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-OPENSTACK-MAPPING-FINAL.csv'    
     # #PHP 
-    # DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-PHP-MAPPING-FINAL.csv'    
+    DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-PHP-MAPPING-FINAL.csv'    
 
 
 
