@@ -6,7 +6,7 @@ Prepare Temporal Data
 import numpy as np 
 import pandas as pd 
 import os 
-
+import datetime 
 
 def makeYear(time_single_val):
     if 'T' in time_single_val:
@@ -42,6 +42,29 @@ def makeYearWiseDataset(df_param, ds_name):
     str_builder = 'YEAR,TACTIC_NAME,TACTIC_PERC' + '\n' + str_builder
     dumpContentIntoFile(str_builder, dump_file_name)
      
+def getChromeDate(df_):
+    complete_list = []
+    date_file='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/RAW/chromium-issues-for-dates.csv'
+    date_df=pd.read_csv(date_file)
+    all_bugs = np.unique( df_['BUGID'].tolist() )
+    for bugID in all_bugs:
+        cve     = df_[df_['BUGID']==bugID]['CVE'].tolist()[0] 
+        existing_ts = df_[df_['BUGID']==bugID]['TIMESTAMP'].tolist()[0] 
+        tactic  = df_[df_['BUGID']==bugID]['TACTIC'].tolist()[0] 
+        if '2019-12-31T' in existing_ts:
+            time_ls = date_df[date_df['ID']==bugID]['OpenedTimestamp'].tolist() 
+            if(len(time_ls) > 0):
+                timesta =  time_ls[0]
+            else: 
+                timesta = 0000000000        
+                print(bugID) 
+            date_time_str =  datetime.datetime.fromtimestamp(  timesta ).strftime('%Y-%m-%dT%H:%M:%S')
+        else:        
+            date_time_str =  existing_ts 
+
+        complete_list.append((bugID, date_time_str, cve, tactic))       
+    final_df = pd.DataFrame(complete_list)
+    final_df.to_csv('CHROME_WITH_TIMESTAMP.csv', header=['BUGID', 'TIMESTAMP', 'CVE', 'TACTIC' ], index=False, encoding='utf-8')    
 
 
 if __name__=='__main__':
@@ -62,3 +85,5 @@ if __name__=='__main__':
     full_df = pd.read_csv(DATASET_FILE) 
     DATASET_NAME = DATASET_FILE.split('/')[-1].split('-')[1]
     makeYearWiseDataset(full_df, DATASET_NAME)    
+
+
