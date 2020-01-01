@@ -36,6 +36,7 @@ def getCVEProportion(full_df):
 
 
 def splitOnCateg(df_, name_, categ_):
+    payload_subcateg_list, diagnos_subcateg_list = [], [] 
     subcateg_list = []
     emptyDict = {} 
     bug_content_file, bug_content_txt = '', ''
@@ -43,6 +44,25 @@ def splitOnCateg(df_, name_, categ_):
         bug_content_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/RAW/MOZILLA-SUBCATEGORY-MAPPING.csv'
         payload_subcateg_list = ['MULTIMEDIA', 'SOURCECODE', 'SOURCECODE', 'SOURCECODE', 'SOURCECODE', 'SOURCECODE', 'SOURCECODE'] ### handle non-existent values manually for mozilla 
         diagnos_subcateg_list = ['SOURCECODE', 'SOURCECODE', 'SOURCECODE', 'SOURCECODE', 'SOURCECODE', 'SOURCECODE', 'SOURCECODE', 'SOURCECODE'] ### handle non-existent values manually for mozilla 
+    elif 'CHROME' in name_:
+        bug_content_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/RAW/CHROME1-SUBCATEGORY-MAPPING.csv'
+        for _ in range(384):
+            payload_subcateg_list.append( 'SOURCECODE' ) 
+        for _ in range(8):
+            payload_subcateg_list.append( 'MULTIMEDIA' ) 
+        for _ in range(3):
+            payload_subcateg_list.append( 'CERTIFICATE' ) 
+        for _ in range(38):
+            payload_subcateg_list.append( 'BINARY' ) 
+
+        for _ in range(48):
+            diagnos_subcateg_list.append( 'SOURCECODE' ) 
+        for _ in range(8):
+            diagnos_subcateg_list.append( 'BUILD' )
+    elif 'ECLIPSE' in name_:
+        bug_content_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/RAW/ECLIPSE-SUBCATEGORY-MAPPING.csv'
+
+
     categ_df = df_[df_['TACTIC']==categ_]
     for bugID in np.unique( categ_df['BUGID'].tolist() ):
         SUBCATEG = ''
@@ -71,14 +91,18 @@ def splitOnCateg(df_, name_, categ_):
             if bugID not in emptyDict: 
                 emptyDict[bugID] =''
     if categ_=='PAYLOAD':
+        # print(len(payload_subcateg_list))
         subcateg_list = subcateg_list + payload_subcateg_list
     else:
+        # print(len(diagnos_subcateg_list))
         subcateg_list = subcateg_list + diagnos_subcateg_list 
-    if len(emptyDict) > 0 and ('MOZILLA' not in name_): ## mozill ha salready been handled so nothing to show 
+    if len(emptyDict) > 0 and ('MOZILLA' not in name_) and ('CHROME' not in name_): ## mozilla and chrome has already been handled so nothing to show 
         print('!'*10)
         print(categ_)
         print(emptyDict)
+        print(len(emptyDict) )
         print('!'*10)
+    subcateg_list = [x_ for x_ in subcateg_list if x_!='NOTFOUND' ]
     return subcateg_list
         
 
@@ -124,11 +148,11 @@ if __name__=='__main__':
     # # #CHROME  
     # DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-CHROME-MAPPING-FINAL.csv'
     # #ECLIPSE  
-    # DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-ECLIPSE-MAPPING-FINAL.csv'
+    DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-ECLIPSE-MAPPING-FINAL.csv'
     # #MOBY    
     # DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-MOBY-MAPPING-FINAL.csv'
     # # #MOZILLA 
-    DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-MOZILLA-MAPPING-FINAL.csv' 
+    # DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-MOZILLA-MAPPING-FINAL.csv' 
     #OPENSTACK 
     # DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-OPENSTACK-MAPPING-FINAL.csv'    
     # #PHP 
