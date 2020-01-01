@@ -68,10 +68,11 @@ def splitOnCateg(df_, name_, categ_):
             subcateg_list.append('NOTFOUND')
             if bugID not in emptyDict: 
                 emptyDict[bugID] =''
-    print('!'*10)
-    print(categ)
-    print(emptyDict)
-    print('!'*10)
+    if len(emptyDict) > 0:
+        print('!'*10)
+        print(categ_)
+        print(emptyDict)
+        print('!'*10)
     return subcateg_list
         
 
