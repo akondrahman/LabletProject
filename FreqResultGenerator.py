@@ -37,6 +37,7 @@ def getCVEProportion(full_df):
 
 def splitOnCateg(df_, name_, categ_):
     subcateg_list = []
+    emptyDict = {} 
     bug_content_file, bug_content_txt = '', ''
     if 'MOZILLA' in name_:
         bug_content_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/RAW/MOZILLA-SUBCATEGORY-MAPPING.csv'
@@ -47,22 +48,30 @@ def splitOnCateg(df_, name_, categ_):
         content_ls       = bug_content_df[bug_content_df['BUGID']==bugID]['CONTENT'].tolist()
         if len(content_ls) > 0:
             bug_content_txt  = content_ls[0].lower()
-        # print(bugID, bug_content_txt) 
-        if categ_=='PAYLOAD':
-            if ('pdf' in bug_content_txt and 'file' in bug_content_txt) or ('.exe' in bug_content_txt): 
-                SUBCATEG = 'BINARY'
-            elif('cert' in bug_content_txt): 
-                SUBCATEG = 'CERTIFICATE' 
-            elif(('mp3' in bug_content_txt) or ('mp4' in bug_content_txt) or ('audio' in bug_content_txt) or ('video' in bug_content_txt)) : 
-                SUBCATEG = 'MULTIMEDIA'
+            # print(bugID, bug_content_txt) 
+            if categ_=='PAYLOAD':
+                if ('pdf' in bug_content_txt and 'file' in bug_content_txt) or ('.exe' in bug_content_txt): 
+                    SUBCATEG = 'BINARY'
+                elif('cert' in bug_content_txt): 
+                    SUBCATEG = 'CERTIFICATE' 
+                elif(('mp3' in bug_content_txt) or ('mp4' in bug_content_txt) or ('audio' in bug_content_txt) or ('video' in bug_content_txt)) : 
+                    SUBCATEG = 'MULTIMEDIA'
+                else:
+                    SUBCATEG = 'SOURCECODE'  
             else:
-                SUBCATEG = 'SOURCECODE'  
+                if(('build' in bug_content_txt and 'log' in bug_content_txt) ) : 
+                    SUBCATEG = 'BUILD'
+                else:
+                    SUBCATEG = 'SOURCECODE'              
+            subcateg_list.append(SUBCATEG) 
         else:
-            if(('build' in bug_content_txt and 'log' in bug_content_txt) ) : 
-                SUBCATEG = 'BUILD'
-            else:
-                SUBCATEG = 'SOURCECODE'              
-        subcateg_list.append(SUBCATEG) 
+            subcateg_list.append('NOTFOUND')
+            if bugID not in emptyDict: 
+                emptyDict[bugID] =''
+    print('!'*10)
+    print(categ)
+    print(emptyDict)
+    print('!'*10)
     return subcateg_list
         
 
@@ -81,6 +90,10 @@ def printSubCateg(ls, name_):
 def printSubCategFreq(full_df, name_):
     ls = splitOnCateg(full_df, name_, 'PAYLOAD')
     printSubCateg(ls, 'PAYLOAD')
+    print('#'*50)
+    ls = splitOnCateg(full_df, name_, 'DIAGNOSTICS')
+    printSubCateg(ls, 'DIAGNOSTICS')
+    print('#'*50)
 
 if __name__=='__main__':
     '''
@@ -121,7 +134,7 @@ if __name__=='__main__':
     DATASET_NAME = DATASET_FILE.split('/')[-1]
     merged_dataframe = mergeDataFrame(NVD_DF, DATASET_DF)
     # print(merged_dataframe.tail())   
-    print('ANALYZING:', DATASET_DF)
+    print('ANALYZING:', DATASET_NAME)
     print('='*100)
     ## Proportion of tactics 
     # getTacticProportion(merged_dataframe)     
