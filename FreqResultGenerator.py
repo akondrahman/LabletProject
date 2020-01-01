@@ -171,6 +171,25 @@ def printSubCategFreq(full_df, name_):
     printSubCateg(ls, 'DIAGNOSTICS')
     print('#'*50)
 
+
+def printMultiTacticFreq(df_, name):
+    cve_tactic_ls = [] 
+    unique_cves = np.unique( df_['ID'].tolist() )
+    for cve_ in unique_cves:
+        cve_df       = df_[df_['ID']==cve_]
+        cve_tactics  = np.unique( cve_df['TACTIC'].tolist()  )
+        cve_tactic_string = ''
+        for tactic_ in cve_tactics:
+            cve_tactic_string = cve_tactic_string + tactic_ + '+'     
+        cve_tactic_ls.append(cve_tactic_string)            
+    tactic_counter_dict = dict(Counter(cve_tactic_ls))
+    total_cve_count     = len(cve_tactic_ls)  
+    for key_, val_ in tactic_counter_dict.items():
+        perc = round(float(val_)/float(total_cve_count), 5)
+        print('TOTAL_VULN_COUNT:{}, TACTC_COMBO:{}, TACTIC_COMBO_OCCURRENCE:{}, TACTIC_COMBO_PERCENTAGE:{}'.format(total_cve_count, key_, val_, perc))
+        print('-'*50)
+    print('*'*100)     
+
 if __name__=='__main__':
     '''
     THE FOLLWOING WILL BE EXCLUDED FROM PAPER 
@@ -215,7 +234,12 @@ if __name__=='__main__':
     ## Proportion of tactics 
     # getTacticProportion(merged_dataframe)     
     # print('='*100)
+    
     # ## Proportion of CVEs
     # getCVEProportion(merged_dataframe) 
+    
     ## Get Sub category proportion 
-    printSubCategFreq(merged_dataframe, DATASET_NAME)        
+    # printSubCategFreq(merged_dataframe, DATASET_NAME)   
+    
+    ## Proportion of co-occurring tactics 
+    printMultiTacticFreq(merged_dataframe, DATASET_NAME)            
