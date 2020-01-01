@@ -41,6 +41,8 @@ def splitOnCateg(df_, name_, categ_):
     bug_content_file, bug_content_txt = '', ''
     if 'MOZILLA' in name_:
         bug_content_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/RAW/MOZILLA-SUBCATEGORY-MAPPING.csv'
+        payload_subcateg_list = ['MULTIMEDIA', 'SOURCECODE', 'SOURCECODE', 'SOURCECODE', 'SOURCECODE', 'SOURCECODE', 'SOURCECODE'] ### handle non-existent values manually for mozilla 
+        diagnos_subcateg_list = ['SOURCECODE', 'SOURCECODE', 'SOURCECODE', 'SOURCECODE', 'SOURCECODE', 'SOURCECODE', 'SOURCECODE', 'SOURCECODE'] ### handle non-existent values manually for mozilla 
     categ_df = df_[df_['TACTIC']==categ_]
     for bugID in np.unique( categ_df['BUGID'].tolist() ):
         SUBCATEG = ''
@@ -68,7 +70,11 @@ def splitOnCateg(df_, name_, categ_):
             subcateg_list.append('NOTFOUND')
             if bugID not in emptyDict: 
                 emptyDict[bugID] =''
-    if len(emptyDict) > 0:
+    if categ_=='PAYLOAD':
+        subcateg_list = subcateg_list + payload_subcateg_list
+    else:
+        subcateg_list = subcateg_list + diagnos_subcateg_list 
+    if len(emptyDict) > 0 and ('MOZILLA' not in name_): ## mozill ha salready been handled so nothing to show 
         print('!'*10)
         print(categ_)
         print(emptyDict)
@@ -83,7 +89,7 @@ def printSubCateg(ls, name_):
     total_ = len(ls)
     for k_, v_ in the_dict.items():
         prop = round( float(v_)/float(total_) , 5)
-        print('CATEG:{}, SUB_CATEG:{}, PROP:{}'.format(name_, k_, prop))
+        print('CATEG:{}, COUNT:{}, SUB_CATEG:{}, PROP:{}'.format(name_, total_, k_, prop))
         print('*'*25)
 
 
