@@ -48,14 +48,20 @@ def splitOnCateg(df_, name_, categ_):
         if len(content_ls) > 0:
             bug_content_txt  = content_ls[0].lower()
         # print(bugID, bug_content_txt) 
-        if ('pdf' in bug_content_txt and 'file' in bug_content_txt) or ('.exe' in bug_content_txt): 
-            SUBCATEG = 'BINARY'
-        elif('cert' in bug_content_txt): 
-            SUBCATEG = 'CERTIFICATE' 
-        elif(('mp3' in bug_content_txt) or ('mp4' in bug_content_txt) or ('audio' in bug_content_txt) or ('video' in bug_content_txt)) : 
-            SUBCATEG = 'MULTIMEDIA'
+        if categ_=='PAYLOAD':
+            if ('pdf' in bug_content_txt and 'file' in bug_content_txt) or ('.exe' in bug_content_txt): 
+                SUBCATEG = 'BINARY'
+            elif('cert' in bug_content_txt): 
+                SUBCATEG = 'CERTIFICATE' 
+            elif(('mp3' in bug_content_txt) or ('mp4' in bug_content_txt) or ('audio' in bug_content_txt) or ('video' in bug_content_txt)) : 
+                SUBCATEG = 'MULTIMEDIA'
+            else:
+                SUBCATEG = 'SOURCECODE'  
         else:
-            SUBCATEG = 'SOURCECODE'  
+            if(('build' in bug_content_txt and 'log' in bug_content_txt) ) : 
+                SUBCATEG = 'BUILD'
+            else:
+                SUBCATEG = 'SOURCECODE'              
         subcateg_list.append(SUBCATEG) 
     return subcateg_list
         
