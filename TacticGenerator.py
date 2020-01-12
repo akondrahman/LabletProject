@@ -170,10 +170,10 @@ def finalizeOpenstackDataFrame(df_param ):
                 else:
                         final_strategy_ls.append(  renameStrategy(new_strategy)  )
 
-            # date_time = getOpenstackBugTime(bugID) 
-            # date_time_str = date_time.strftime('%Y-%m-%dT%H-%M-%S')
+            date_time = getOpenstackBugTime(bugID) 
+            date_time_str = date_time.strftime('%Y-%m-%dT%H-%M-%S')
 
-            date_time_str = '2019-12-31T12:00:00'
+            # date_time_str = '2019-12-31T12:00:00'
 
             print(bugID, date_time_str , cve, final_strategy_ls) 
             for tactic in final_strategy_ls:
@@ -191,10 +191,10 @@ if __name__=='__main__':
 
 
     #### OPENSTACK 
-    # DS_NAME='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-OPENSTACK-MAPPING-SEMIFINAL.csv'
-    # OUT_FILE = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-OPENSTACK-MAPPING-FINAL.csv'
-    # DS_FRAME = pd.read_csv(DS_NAME) 
-    # final_df =finalizeOpenstackDataFrame(DS_FRAME)
+    DS_NAME='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-OPENSTACK-MAPPING-SEMIFINAL.csv'
+    OUT_FILE = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-OPENSTACK-MAPPING-FINAL.csv'
+    DS_FRAME = pd.read_csv(DS_NAME) 
+    final_df =finalizeOpenstackDataFrame(DS_FRAME)
 
     #### CHROME 
     # DS_NAME='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-CHROME-MAPPING-SEMIFINAL.csv'
@@ -237,11 +237,11 @@ if __name__=='__main__':
 
 
     #### LIBREOFFICE
-    DS_NAME  ='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-LIBREOFFICE-MAPPING-SEMIFINAL.csv'
-    PKL_FILE ='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/RAW/ALL_LIBREOFFICE_BUG_DETAILS.PKL'
-    OUT_FILE = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-LIBREOFFICE-MAPPING-FINAL.csv'
-    DS_FRAME = pd.read_csv(DS_NAME) 
-    PKL_DAT  = pickle.load(open(PKL_FILE, 'rb'), encoding="latin1")
-    final_df =finalizeRedHatDataFrame(DS_FRAME, PKL_DAT)
+    # DS_NAME  ='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-LIBREOFFICE-MAPPING-SEMIFINAL.csv'
+    # PKL_FILE ='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/RAW/ALL_LIBREOFFICE_BUG_DETAILS.PKL'
+    # OUT_FILE = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-LIBREOFFICE-MAPPING-FINAL.csv'
+    # DS_FRAME = pd.read_csv(DS_NAME) 
+    # PKL_DAT  = pickle.load(open(PKL_FILE, 'rb'), encoding="latin1")
+    # final_df =finalizeRedHatDataFrame(DS_FRAME, PKL_DAT)
 
     final_df.to_csv(OUT_FILE, header=['BUGID', 'TIMESTAMP', 'CVE', 'TACTIC' ], index=False, encoding='utf-8')

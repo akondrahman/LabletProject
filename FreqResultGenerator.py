@@ -158,7 +158,7 @@ def printSubCateg(ls, name_):
     total_ = len(ls)
     for k_, v_ in the_dict.items():
         prop = round( float(v_)/float(total_) , 5)
-        print('CATEG:{}, COUNT:{}, SUB_CATEG:{}, PROP:{}'.format(name_, total_, k_, prop))
+        print('CATEG:{}, COUNT:{}, SUB_CATEG:{}, SUB_CATEG_CNT:{} PROP:{}'.format(name_, total_, k_, v_, prop))
         print('*'*25)
 
 
@@ -190,6 +190,28 @@ def printMultiTacticFreq(df_, name):
         print('-'*50)
     print('*'*100)     
 
+def makeMonth(time_single_val):
+    if 'T' in time_single_val:
+        date_     = time_single_val.split('T')[0] 
+    else:
+        date_     = time_single_val
+    date_list = date_.split('-')
+    month = date_list[0] + '-' + date_list[1] 
+    return month 
+
+def printBugReportSummary(full_df): 
+    all_bugID_list =  np.unique( full_df['BUGID'].tolist()  ) 
+    unique_cves = np.unique( full_df['ID'].tolist() )
+    full_df['MONTH'] = full_df['TIMESTAMP'].apply(makeMonth)
+    all_months =  np.unique( full_df['MONTH'].tolist() ) 
+
+    print('TOTAL BUGS:', len(all_bugID_list))
+    print('='*100)
+    print('TOTAL CVEs:', len(unique_cves))
+    print('='*100)
+    print('TIME RANGE:{}---{}'.format( min(all_months) , max(all_months) ) )
+    print('='*100)    
+
 if __name__=='__main__':
     '''
     THE FOLLWOING WILL BE EXCLUDED FROM PAPER 
@@ -220,7 +242,7 @@ if __name__=='__main__':
     #OPENSTACK 
     # DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-OPENSTACK-MAPPING-FINAL.csv'    
     # #PHP 
-    DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-PHP-MAPPING-FINAL.csv'    
+    # DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-PHP-MAPPING-FINAL.csv'    
 
 
 
@@ -239,7 +261,10 @@ if __name__=='__main__':
     # getCVEProportion(merged_dataframe) 
     
     ## Get Sub category proportion 
-    # printSubCategFreq(merged_dataframe, DATASET_NAME)   
+    printSubCategFreq(merged_dataframe, DATASET_NAME)   
     
     ## Proportion of co-occurring tactics 
-    printMultiTacticFreq(merged_dataframe, DATASET_NAME)            
+    # printMultiTacticFreq(merged_dataframe, DATASET_NAME)    
+
+    ## Bug Report Summary used in RQ2 
+    # printBugReportSummary(merged_dataframe)          
