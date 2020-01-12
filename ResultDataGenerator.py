@@ -70,30 +70,6 @@ def printMappedCWEs(full_loaded_df):
             print('*'*25)
         print('='*50) 
 
-def printTacticSeverityMapping(full_df): 
-    cve_tactic_dict = {}
-    unique_cves = np.unique( full_df['ID'].tolist() )
-    for cve_ in unique_cves:
-        cve_df       = full_df[full_df['ID']==cve_]
-        cve_severity = cve_df['SEVERITY'].tolist()[0] 
-        cve_tactics  = np.unique( cve_df['TACTIC'].tolist()  )
-        cve_tactic_string = ''
-        for tactic_ in cve_tactics:
-            cve_tactic_string = cve_tactic_string + tactic_ + '+'
-        # print(cve_, cve_severity, cve_tactic_string) 
-        if cve_severity not in cve_tactic_dict:
-            cve_tactic_dict[cve_severity] = [cve_tactic_string]  
-        else:
-            cve_tactic_dict[cve_severity] = cve_tactic_dict[cve_severity] +  [cve_tactic_string]                  
-    for k_, v_ in cve_tactic_dict.items():
-        if k_!='NOT_FOUND':
-            tactic_counter_dict = dict(Counter(v_))
-            total_tactic_count  = len(v_) 
-            for key_, val_ in tactic_counter_dict.items():
-                perc = round(float(val_)/float(total_tactic_count), 4)
-                print('SEVERITY:{}, TOTAL_VULN_COUNT:{}, TACTC_COMBO:{}, TACTIC_COMBO_OCCURRENCE:{}, TACTIC_COMBO_PERCENTAGE:{}'.format(k_, len(v_), key_, val_, perc))
-                print('-'*50)
-            print('*'*100) 
 
 if __name__=='__main__':
     # ###RQ: What source code weaknesses are exploited with the identified tactics ... will not be used in paper: printMappedCWEs(merged_dataframe) 
@@ -112,7 +88,7 @@ if __name__=='__main__':
     #OPENSTACK 
     # DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-OPENSTACK-MAPPING-FINAL.csv'    
     # #PHP 
-    # DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-PHP-MAPPING-FINAL.csv'    
+    DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-PHP-MAPPING-FINAL.csv'    
 
 
 
@@ -120,13 +96,6 @@ if __name__=='__main__':
     DATASET_DF  = pd.read_csv(DATASET_FILE) 
     merged_dataframe = mergeDataFrame(NVD_DF, DATASET_DF)
     # print(merged_dataframe.tail()) 
-
-
-    ###RQ: What is the mapping of vulnerability severity and identified tactics? 
-    printTacticSeverityMapping(merged_dataframe) 
-    
-
-
 
 
     '''

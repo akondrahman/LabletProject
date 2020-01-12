@@ -261,10 +261,10 @@ if __name__=='__main__':
     # getCVEProportion(merged_dataframe) 
     
     ## Get Sub category proportion 
-    printSubCategFreq(merged_dataframe, DATASET_NAME)   
+    # printSubCategFreq(merged_dataframe, DATASET_NAME)   
     
     ## Proportion of co-occurring tactics 
-    # printMultiTacticFreq(merged_dataframe, DATASET_NAME)    
+    printMultiTacticFreq(merged_dataframe, DATASET_NAME)    
 
     ## Bug Report Summary used in RQ2 
     # printBugReportSummary(merged_dataframe)          
