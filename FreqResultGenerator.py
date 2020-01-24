@@ -12,8 +12,9 @@ def mergeDataFrame(nvd_df, mapping_df):
     mapping_df['CVE'] =  mapping_df['CVE'].str.upper() 
     # print(mapping_df.head())
     merged_df   =  nvd_df.merge(mapping_df, left_on='ID', right_on='CVE')
-    filtered_df =  merged_df[merged_df['SEVERITY']!='NOT_FOUND']
-    return filtered_df 
+    # filtered_df =  merged_df[merged_df['SEVERITY']!='NOT_FOUND'] ###severity is not used so will filter out 
+    # return filtered_df 
+    return merged_df 
 
 def getTacticProportion(full_df):
     all_tactics = full_df['TACTIC'].tolist() 
@@ -120,9 +121,11 @@ def splitOnCateg(df_, name_, categ_):
                 if ('pdf' in bug_content_txt and 'file' in bug_content_txt) or ('.exe' in bug_content_txt): 
                     SUBCATEG = 'BINARY'
                 elif('cert' in bug_content_txt): 
-                    SUBCATEG = 'CERTIFICATE' 
+                    # SUBCATEG = 'CERTIFICATE' 
+                    SUBCATEG = 'BINARY' 
                 elif(('mp3' in bug_content_txt) or ('mp4' in bug_content_txt) or ('audio' in bug_content_txt) or ('video' in bug_content_txt)) : 
-                    SUBCATEG = 'MULTIMEDIA'
+                    # SUBCATEG = 'MULTIMEDIA'
+                    SUBCATEG = 'BINARY' 
                 else:
                     SUBCATEG = 'SOURCECODE'  
             else:
@@ -224,6 +227,8 @@ if __name__=='__main__':
     # DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-HTTPD-MAPPING-FINAL.csv'
     # #REDHAT  
     # DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-REDHAT-MAPPING-FINAL.csv'
+    # #MOBY    
+    # DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-MOBY-MAPPING-FINAL.csv'
     '''
     '''
 
@@ -235,8 +240,6 @@ if __name__=='__main__':
     # DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-CHROME-MAPPING-FINAL.csv'
     # #ECLIPSE  
     # DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-ECLIPSE-MAPPING-FINAL.csv'
-    # #MOBY    
-    # DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-MOBY-MAPPING-FINAL.csv'
     # # #MOZILLA 
     # DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-MOZILLA-MAPPING-FINAL.csv' 
     #OPENSTACK 
@@ -255,7 +258,7 @@ if __name__=='__main__':
     print('='*100)
     ## Proportion of tactics 
     # getTacticProportion(merged_dataframe)     
-    # print('='*100)
+    print('='*100)
     
     # ## Proportion of CVEs
     # getCVEProportion(merged_dataframe) 
@@ -264,7 +267,7 @@ if __name__=='__main__':
     # printSubCategFreq(merged_dataframe, DATASET_NAME)   
     
     ## Proportion of co-occurring tactics 
-    printMultiTacticFreq(merged_dataframe, DATASET_NAME)    
+    # printMultiTacticFreq(merged_dataframe, DATASET_NAME)    
 
     ## Bug Report Summary used in RQ2 
     # printBugReportSummary(merged_dataframe)          

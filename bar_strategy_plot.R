@@ -13,11 +13,6 @@ library(ggplot2)
 # THE_DS_NAME <- "ECLIPSE"
 # OUT_FIL     <- "/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/FSE-Writing/FSE20_Vuln_Tactic/images/ECLIPSE_YEAR.pdf"
 
-# THE_FILE    <- "/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/RESULTS/FSE2020/MOBY_YEAR_TEMPORAL.csv"
-# THE_LIMIT   <- 1
-# THE_DS_NAME <- "MOBY"
-# OUT_FIL     <- "/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/FSE-Writing/FSE20_Vuln_Tactic/images/MOBY_YEAR.pdf"
-
 # THE_FILE    <- "/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/RESULTS/FSE2020/MOZILLA_YEAR_TEMPORAL.csv"
 # THE_LIMIT   <- 1
 # THE_DS_NAME <- "MOZILLA"
