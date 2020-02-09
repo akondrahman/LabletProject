@@ -95,6 +95,40 @@ def makeMonthWiseDataset(df_param, ds_name):
     str_builder = 'MONTH,TACTIC_NAME,TACTIC_PERC' + '\n' + str_builder
     dumpContentIntoFile(str_builder, dump_file_name)
 
+def makeYearBugReportDataset(df_param, ds_name):
+    str_builder  = ''
+    df_param['YEAR'] = df_param['TIMESTAMP'].apply(makeYear)
+    all_years =  np.unique( df_param['YEAR'].tolist() ) 
+    for per_year in all_years: 
+            per_year_df          = df_param[df_param['YEAR']==per_year]
+            per_year_tactics     = np.unique( per_year_df['TACTIC'].tolist()  )            
+            per_year_bugs        = np.unique( per_year_df['BUGID'].tolist()   ) 
+            for tac in per_year_tactics:  
+                per_tactic_year_df   = per_year_df[per_year_df['TACTIC']==tac] 
+                per_tactic_year_bugs = np.unique(  per_tactic_year_df['BUGID'].tolist()  )
+                tac_perc             = round(float( len(per_tactic_year_bugs)  )/float( len(per_year_bugs) ) , 5) * 100 
+                str_builder = str_builder + per_year + ',' + tac + ',' + str(tac_perc) + '\n' 
+    dump_file_name =  '../RESULTS/FSE2020/' + ds_name + '_YEAR_BUG_TEMPORAL.csv' 
+    str_builder = 'YEAR,TACTIC_NAME,TACTIC_PERC' + '\n' + str_builder
+    dumpContentIntoFile(str_builder, dump_file_name)
+
+def makeYearCVEDataset(df_param, ds_name):
+    str_builder  = ''
+    df_param['YEAR'] = df_param['TIMESTAMP'].apply(makeYear)
+    all_years =  np.unique( df_param['YEAR'].tolist() ) 
+    for per_year in all_years: 
+            per_year_df          = df_param[df_param['YEAR']==per_year]
+            per_year_tactics     = np.unique( per_year_df['TACTIC'].tolist()  )            
+            per_year_cves        = np.unique( per_year_df['CVE'].tolist()   ) 
+            for tac in per_year_tactics:  
+                per_tactic_year_df   = per_year_df[per_year_df['TACTIC']==tac] 
+                per_tactic_year_cves = np.unique(  per_tactic_year_df['CVE'].tolist()  )
+                tac_perc             = round(float( len(per_tactic_year_cves)  )/float( len(per_year_cves) ) , 5) * 100 
+                str_builder = str_builder + per_year + ',' + tac + ',' + str(tac_perc) + '\n' 
+    dump_file_name =  '../RESULTS/FSE2020/' + ds_name + '_YEAR_CVE_TEMPORAL.csv' 
+    str_builder = 'YEAR,TACTIC_NAME,TACTIC_PERC' + '\n' + str_builder
+    dumpContentIntoFile(str_builder, dump_file_name)
+
 
 if __name__=='__main__':
     # # #CHROME  
@@ -111,12 +145,15 @@ if __name__=='__main__':
 
     full_df = pd.read_csv(DATASET_FILE) 
     DATASET_NAME = DATASET_FILE.split('/')[-1].split('-')[1]
-    makeYearWiseDataset(full_df, DATASET_NAME)    
-    makeMonthWiseDataset(full_df, DATASET_NAME)        
+    makeYearBugReportDataset(full_df, DATASET_NAME) 
+    makeYearCVEDataset(full_df, DATASET_NAME)     
+
 
     '''
     '''
     ## WILL NOT BE USED :     # #MOBY    
     #  DATASET_FILE='/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/VulnStrategyMining/LOCKED_DATASETS/TACTIC-MAPPING/LOCKED-MOBY-MAPPING-FINAL.csv'
+    # makeYearWiseDataset(full_df, DATASET_NAME)    
+    # makeMonthWiseDataset(full_df, DATASET_NAME)            
     '''
     '''

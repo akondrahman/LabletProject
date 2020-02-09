@@ -17,11 +17,16 @@ def mergeDataFrame(nvd_df, mapping_df):
     return merged_df 
 
 def getTacticProportion(full_df):
+    all_bugs    = np.unique( full_df['BUGID'].tolist() )
     all_tactics = full_df['TACTIC'].tolist() 
     unique_tactics = np.unique(all_tactics) 
     for tact in unique_tactics:
-        tact_list = [z for z in all_tactics if z==tact] 
-        print('ALL:{},TACTIC_NAME:{},TACTIC_COUNT:{},TACTIC_PROP:{}'.format(len(all_tactics), tact, len(tact_list), float(len(tact_list))/float(len(all_tactics))))
+        # tact_list = [z for z in all_tactics if z==tact] 
+        tactic_df = full_df[full_df['TACTIC'] == tact]
+        bug_list  = np.unique(  tactic_df['BUGID'].tolist() )
+        # print('ALL:{},TACTIC_NAME:{},TACTIC_COUNT:{},TACTIC_PROP:{}'.format(len(all_tactics), tact, len(tact_list), float(len(tact_list))/float(len(all_tactics))))
+        # print('-'*25) 
+        print('TOTAL_BUG_COUNT:{},TACTIC_NAME:{},TACTIC_COUNT:{},TACTIC_PROP:{}'.format(len(all_bugs), tact, len(bug_list), float(len(bug_list))/float(len(all_bugs))))
         print('-'*25) 
 
 
@@ -257,7 +262,7 @@ if __name__=='__main__':
     print('ANALYZING:', DATASET_NAME)
     print('='*100)
     ## Proportion of tactics 
-    # getTacticProportion(merged_dataframe)     
+    getTacticProportion(merged_dataframe)     
     print('='*100)
     
     # ## Proportion of CVEs
